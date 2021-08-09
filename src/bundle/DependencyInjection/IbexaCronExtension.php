@@ -4,7 +4,7 @@
  * @copyright Copyright (C) Ibexa AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
-namespace EzSystems\EzPlatformCronBundle\DependencyInjection;
+namespace Ibexa\Bundle\Cron\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -16,7 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Loads and manages bundle configuration.
  */
-class EzPlatformCronExtension extends Extension implements PrependExtensionInterface
+class IbexaCronExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -38,3 +38,5 @@ class EzPlatformCronExtension extends Extension implements PrependExtensionInter
         $container->prependExtensionConfig('monolog', $config);
     }
 }
+
+class_alias(IbexaCronExtension::class, 'EzSystems\EzPlatformCronBundle\DependencyInjection\EzPlatformCronExtension');
