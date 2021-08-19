@@ -1,5 +1,5 @@
 parameters:
-    ezplatform.cron.registry.cronjobs.class: EzSystems\EzPlatformCronBundle\Registry\CronJobsRegistry
+    ezplatform.cron.registry.cronjobs.class: Ibexa\Bundle\Cron\Registry\CronJobsRegistry
 
 services:
     _defaults:
@@ -13,7 +13,7 @@ services:
             - '%kernel.environment%'
             - '@ezpublish.siteaccess'
 
-    EzSystems\EzPlatformCronBundle\Command\CronRunCommand:
+    Ibexa\Bundle\Cron\Command\CronRunCommand:
         arguments:
             $logger: '@monolog.logger.cronjob'
             $cronJobsRegistry: '@ezplatform.cron.registry.cronjobs'
