@@ -4,9 +4,9 @@
  * @copyright Copyright (C) Ibexa AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
-namespace EzSystems\EzPlatformCronBundle\DependencyInjection\Compiler;
+namespace Ibexa\Bundle\Cron\DependencyInjection\Compiler;
 
-use EzSystems\EzPlatformCronBundle\Registry\CronJobsRegistry;
+use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -49,3 +49,5 @@ class CronJobCompilerPass implements CompilerPassInterface
         }
     }
 }
+
+class_alias(CronJobCompilerPass::class, 'EzSystems\EzPlatformCronBundle\DependencyInjection\Compiler\CronJobCompilerPass');

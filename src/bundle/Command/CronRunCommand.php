@@ -6,14 +6,14 @@
  */
 declare(strict_types=1);
 
-namespace EzSystems\EzPlatformCronBundle\Command;
+namespace Ibexa\Bundle\Cron\Command;
 
 use Cron\Cron;
 use Cron\Executor\Executor;
 use Cron\Report\CronReport;
 use Cron\Resolver\ArrayResolver;
 use eZ\Bundle\EzPublishCoreBundle\Command\BackwardCompatibleCommand;
-use EzSystems\EzPlatformCronBundle\Registry\CronJobsRegistry;
+use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -109,3 +109,5 @@ EOT
         return ['ezplatform:cron:run'];
     }
 }
+
+class_alias(CronRunCommand::class, 'EzSystems\EzPlatformCronBundle\Command\CronRunCommand');

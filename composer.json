@@ -1,9 +1,9 @@
 {
-    "name": "ezsystems/ezplatform-cron",
-    "description": "Simple cron bundle for eZ Platform",
+    "name": "ibexa/cron",
+    "description": "Simple cron bundle for Ibexa",
     "homepage": "https://github.com/ezsystems/ezplatform-cron",
     "license": "GPL-2.0-only",
-    "type": "ezplatform-bundle",
+    "type": "ibexa-bundle",
     "authors": [
         {
             "name": "eZ dev-team & eZ Community",
@@ -11,16 +11,22 @@
         }
     ],
     "replace": {
-        "ezsystems/ezstudio-cron": "*"
+        "ezsystems/ezstudio-cron": "*",
+        "ezsystems/ezplatform-cron": "*"
     },
     "autoload": {
         "psr-4": {
-            "EzSystems\\EzPlatformCronBundle\\": "src/bundle"
+            "EzSystems\\EzPlatformCronBundle\\": "src/bundle",
+            "Ibexa\\Cron\\": "src/lib/",
+            "Ibexa\\Bundle\\Cron\\": "src/bundle/",
+            "Ibexa\\Contracts\\Cron\\": "src/contracts/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "EzSystems\\EzPlatformCronBundle\\Tests\\": "tests/CronBundle"
+            "EzSystems\\EzPlatformCronBundle\\Tests\\": "tests/CronBundle",
+            "Ibexa\\Tests\\Bundle\\Cron\\": "tests/bundle/",
+            "Ibexa\\Tests\\Cron\\": "tests/lib/"
         }
     },
     "require": {
@@ -44,7 +50,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "4.0.x-dev"
+            "dev-main": "4.0.x-dev"
         }
     }
 }

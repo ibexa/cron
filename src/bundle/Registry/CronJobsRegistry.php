@@ -4,7 +4,7 @@
  * @copyright Copyright (C) Ibexa AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
-namespace EzSystems\EzPlatformCronBundle\Registry;
+namespace Ibexa\Bundle\Cron\Registry;
 
 use Cron\Job\ShellJob;
 use Cron\Schedule\CrontabSchedule;
@@ -80,3 +80,5 @@ class CronJobsRegistry
         return $this->cronJobs[$category];
     }
 }
+
+class_alias(CronJobsRegistry::class, 'EzSystems\EzPlatformCronBundle\Registry\CronJobsRegistry');
