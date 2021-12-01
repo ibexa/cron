@@ -16,7 +16,7 @@ class CronJobCompilerPass implements CompilerPassInterface
     /**
      * You can modify the container here before it is dumped to PHP code.
      *
-     * @param ContainerBuilder $container
+     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {
