@@ -8,7 +8,7 @@ namespace Ibexa\Bundle\Cron\Registry;
 
 use Cron\Job\ShellJob;
 use Cron\Schedule\CrontabSchedule;
-use eZ\Publish\Core\MVC\Symfony\SiteAccess;
+use Ibexa\Core\MVC\Symfony\SiteAccess;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -32,7 +32,7 @@ class CronJobsRegistry
     protected $environment;
 
     /**
-     * @var \eZ\Publish\Core\MVC\Symfony\SiteAccess
+     * @var \Ibexa\Core\MVC\Symfony\SiteAccess
      */
     protected $siteaccess;
 

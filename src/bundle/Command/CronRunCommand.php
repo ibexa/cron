@@ -12,7 +12,7 @@ use Cron\Cron;
 use Cron\Executor\Executor;
 use Cron\Report\CronReport;
 use Cron\Resolver\ArrayResolver;
-use eZ\Bundle\EzPublishCoreBundle\Command\BackwardCompatibleCommand;
+use Ibexa\Bundle\Core\Command\BackwardCompatibleCommand;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
 
 final class CronRunCommand extends Command implements BackwardCompatibleCommand
 {
-    /** @var \EzSystems\EzPlatformCronBundle\Registry\CronJobsRegistry */
+    /** @var \Ibexa\Bundle\Cron\Registry\CronJobsRegistry */
     private $cronJobsRegistry;
 
     /** @var \Psr\Log\LoggerInterface */
