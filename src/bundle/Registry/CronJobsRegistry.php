@@ -14,7 +14,7 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class CronJobsRegistry
 {
-    const DEFAULT_CATEGORY = 'default';
+    public const DEFAULT_CATEGORY = 'default';
 
     /**
      * @var array
@@ -52,7 +52,8 @@ class CronJobsRegistry
 
     public function addCronJob(Command $command, string $schedule = null, string $category = self::DEFAULT_CATEGORY, string $options = ''): void
     {
-        $command = sprintf('%s %s %s %s --siteaccess=%s --env=%s',
+        $command = sprintf(
+            '%s %s %s %s --siteaccess=%s --env=%s',
             $this->executable,
             $_SERVER['SCRIPT_NAME'],
             $command->getName(),

@@ -14,11 +14,11 @@ use Cron\Report\CronReport;
 use Cron\Resolver\ArrayResolver;
 use Ibexa\Bundle\Core\Command\BackwardCompatibleCommand;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Psr\Log\LoggerInterface;
 
 final class CronRunCommand extends Command implements BackwardCompatibleCommand
 {
