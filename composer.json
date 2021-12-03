@@ -30,23 +30,23 @@
         }
     },
     "require": {
-        "php": "^7.3",
+        "php": "^7.4",
         "cron/cron": "^1.4",
         "symfony/dependency-injection": "^5.0",
         "symfony/http-kernel": "^5.0",
         "symfony/console": "^5.0",
         "symfony/config": "^5.0",
         "symfony/process": "^5.0",
-        "ezsystems/ezplatform-kernel": "^4.0@dev"
+        "ibexa/core": "^4.0@dev"
     },
     "require-dev": {
-        "ezsystems/ezplatform-code-style": "^0.2.0",
-        "ezsystems/doctrine-dbal-schema": "^4.0@dev",
-        "friendsofphp/php-cs-fixer": "^2.16.3",
+        "ibexa/code-style": "^1.0",
+        "ibexa/doctrine-schema": "^4.0@dev",
+        "friendsofphp/php-cs-fixer": "^3.0",
         "phpunit/phpunit": "^6.4 || ^7.0"
     },
     "scripts": {
-        "fix-cs": "@php ./vendor/bin/php-cs-fixer fix -v --show-progress=estimating"
+        "fix-cs": "php-cs-fixer fix --config=.php-cs-fixer.php -v --show-progress=dots"
     },
     "extra": {
         "branch-alias": {

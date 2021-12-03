@@ -8,13 +8,13 @@ namespace Ibexa\Bundle\Cron\Registry;
 
 use Cron\Job\ShellJob;
 use Cron\Schedule\CrontabSchedule;
-use eZ\Publish\Core\MVC\Symfony\SiteAccess;
+use Ibexa\Core\MVC\Symfony\SiteAccess;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 class CronJobsRegistry
 {
-    const DEFAULT_CATEGORY = 'default';
+    public const DEFAULT_CATEGORY = 'default';
 
     /**
      * @var array
@@ -32,7 +32,7 @@ class CronJobsRegistry
     protected $environment;
 
     /**
-     * @var \eZ\Publish\Core\MVC\Symfony\SiteAccess
+     * @var \Ibexa\Core\MVC\Symfony\SiteAccess
      */
     protected $siteaccess;
 
@@ -52,7 +52,8 @@ class CronJobsRegistry
 
     public function addCronJob(Command $command, string $schedule = null, string $category = self::DEFAULT_CATEGORY, string $options = ''): void
     {
-        $command = sprintf('%s %s %s %s --siteaccess=%s --env=%s',
+        $command = sprintf(
+            '%s %s %s %s --siteaccess=%s --env=%s',
             $this->executable,
             $_SERVER['SCRIPT_NAME'],
             $command->getName(),
