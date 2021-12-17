@@ -4,13 +4,13 @@
  * @copyright Copyright (C) Ibexa AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
-namespace EzSystems\EzPlatformCronBundle;
+namespace Ibexa\Bundle\Cron;
 
-use EzSystems\EzPlatformCronBundle\DependencyInjection\Compiler\CronJobCompilerPass;
+use Ibexa\Bundle\Cron\DependencyInjection\Compiler\CronJobCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class EzPlatformCronBundle extends Bundle
+class IbexaCronBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {
@@ -19,3 +19,5 @@ class EzPlatformCronBundle extends Bundle
         $container->addCompilerPass(new CronJobCompilerPass());
     }
 }
+
+class_alias(IbexaCronBundle::class, 'EzSystems\EzPlatformCronBundle\EzPlatformCronBundle');
