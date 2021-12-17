@@ -30,7 +30,7 @@
         }
     },
     "require": {
-        "php": "^7.4",
+        "php": "^7.4 || ^8.0",
         "cron/cron": "^1.4",
         "symfony/dependency-injection": "^5.0",
         "symfony/http-kernel": "^5.0",
