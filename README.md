@@ -24,7 +24,7 @@ Example for Linux crontab (`crontab -e`):
 Setting up own cron jobs is as simple as tagging services for your existing Symfony Commands.
 
 The tag takes the following arguments:
-- `name`: `ezplatform.cron.job`
+- `name`: `ibexa.cron.job`
 - `schedule`: _Takes any kind of [format supported by cron/cron](https://github.com/Cron/Cron#crontab-syntax), which mimics linux crontab format. E.g. `* * * * *`_
 - `category`: _(Optional, by default: `default`) Lets you separate cronjobs that should be run under different logic then default, e.g. infrequent jobs (NOTE: Means end user will need to setup several entries in his crontab to run all categories!)_
 - `options`: _(Optional, by default: `''`) Takes custom option/s in string format which are added to the command. (E.g. '--keep=0 --status=draft' for running the cleanup versions command)_
@@ -37,7 +37,7 @@ The tag takes the following arguments:
         class: EzSystems\DateBasedPublisherBundle\Command\PublishScheduledCommand
         tags:
             - { name: console.command }
-            - { name: ezplatform.cron.job, schedule: '* * * * *' }
+            - { name: ibexa.cron.job, schedule: '* * * * *' }
 ```
 
 ## Logging run command

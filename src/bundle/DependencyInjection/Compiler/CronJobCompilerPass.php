@@ -25,7 +25,7 @@ class CronJobCompilerPass implements CompilerPassInterface
         }
 
         $registry = $container->findDefinition('ezplatform.cron.registry.cronjobs');
-        $cronJobs = $container->findTaggedServiceIds('ezplatform.cron.job');
+        $cronJobs = $container->findTaggedServiceIds('ibexa.cron.job');
 
         foreach ($cronJobs as $id => $tags) {
             foreach ($tags as $cronJob) {
