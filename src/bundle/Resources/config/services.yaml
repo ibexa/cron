@@ -6,16 +6,16 @@ services:
         autowire: true
         autoconfigure: true
 
-    ezplatform.cron.registry.cronjobs:
+    Ibexa\Bundle\Cron\Registry\CronJobsRegistry:
         class: '%ezplatform.cron.registry.cronjobs.class%'
         lazy: true
         arguments:
             - '%kernel.environment%'
-            - '@ezpublish.siteaccess'
+            - '@Ibexa\Core\MVC\Symfony\SiteAccess'
 
     Ibexa\Bundle\Cron\Command\CronRunCommand:
         arguments:
             $logger: '@monolog.logger.cronjob'
-            $cronJobsRegistry: '@ezplatform.cron.registry.cronjobs'
+            $cronJobsRegistry: '@Ibexa\Bundle\Cron\Registry\CronJobsRegistry'
         tags:
             - { name: 'console.command' }
