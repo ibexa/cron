@@ -20,11 +20,11 @@ class CronJobCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has(\Ibexa\Bundle\Cron\Registry\CronJobsRegistry::class)) {
+        if (!$container->has(CronJobsRegistry::class)) {
             return;
         }
 
-        $registry = $container->findDefinition(\Ibexa\Bundle\Cron\Registry\CronJobsRegistry::class);
+        $registry = $container->findDefinition(CronJobsRegistry::class);
         $cronJobs = $container->findTaggedServiceIds('ibexa.cron.job');
 
         foreach ($cronJobs as $id => $tags) {
