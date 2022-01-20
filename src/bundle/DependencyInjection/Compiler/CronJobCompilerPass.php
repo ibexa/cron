@@ -20,11 +20,11 @@ class CronJobCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('ezplatform.cron.registry.cronjobs')) {
+        if (!$container->has(CronJobsRegistry::class)) {
             return;
         }
 
-        $registry = $container->findDefinition('ezplatform.cron.registry.cronjobs');
+        $registry = $container->findDefinition(CronJobsRegistry::class);
         $cronJobs = $container->findTaggedServiceIds('ibexa.cron.job');
 
         foreach ($cronJobs as $id => $tags) {
