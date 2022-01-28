@@ -1,5 +1,4 @@
 parameters:
-    ezplatform.cron.registry.cronjobs.class: Ibexa\Bundle\Cron\Registry\CronJobsRegistry
 
 services:
     _defaults:
@@ -7,7 +6,6 @@ services:
         autoconfigure: true
 
     Ibexa\Bundle\Cron\Registry\CronJobsRegistry:
-        class: '%ezplatform.cron.registry.cronjobs.class%'
         lazy: true
         arguments:
             - '%kernel.environment%'
