@@ -1,32 +1,25 @@
 {
     "name": "ibexa/cron",
-    "description": "Simple cron bundle for Ibexa",
-    "homepage": "https://github.com/ezsystems/ezplatform-cron",
     "license": "GPL-2.0-only",
+    "description": "Simple cron bundle for Ibexa",
     "type": "ibexa-bundle",
-    "authors": [
-        {
-            "name": "eZ dev-team & eZ Community",
-            "homepage": "https://github.com/ezsystems/ezplatform-cron/contributors"
-        }
-    ],
     "replace": {
         "ezsystems/ezstudio-cron": "*",
         "ezsystems/ezplatform-cron": "*"
     },
     "autoload": {
         "psr-4": {
-            "EzSystems\\EzPlatformCronBundle\\": "src/bundle",
             "Ibexa\\Cron\\": "src/lib/",
             "Ibexa\\Bundle\\Cron\\": "src/bundle/",
-            "Ibexa\\Contracts\\Cron\\": "src/contracts/"
+            "Ibexa\\Contracts\\Cron\\": "src/contracts/",
+            "EzSystems\\EzPlatformCronBundle\\": "src/bundle"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "EzSystems\\EzPlatformCronBundle\\Tests\\": "tests/CronBundle",
             "Ibexa\\Tests\\Bundle\\Cron\\": "tests/bundle/",
-            "Ibexa\\Tests\\Cron\\": "tests/lib/"
+            "Ibexa\\Tests\\Cron\\": "tests/lib/",
+            "EzSystems\\EzPlatformCronBundle\\Tests\\": "tests/CronBundle"
         }
     },
     "require": {
