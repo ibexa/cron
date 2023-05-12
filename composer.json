@@ -30,11 +30,11 @@
         "symfony/console": "^5.0",
         "symfony/config": "^5.0",
         "symfony/process": "^5.0",
-        "ibexa/core": "~4.5.0@dev"
+        "ibexa/core": "~4.5.0"
     },
     "require-dev": {
         "ibexa/code-style": "^1.0",
-        "ibexa/doctrine-schema": "~4.5.0@dev",
+        "ibexa/doctrine-schema": "~4.5.0",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpunit/phpunit": "^6.4 || ^7.0"
     },
