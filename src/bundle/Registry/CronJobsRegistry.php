@@ -82,5 +82,3 @@ class CronJobsRegistry
         return $this->cronJobs[$category];
     }
 }
-
-class_alias(CronJobsRegistry::class, 'EzSystems\EzPlatformCronBundle\Registry\CronJobsRegistry');

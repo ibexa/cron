@@ -109,5 +109,3 @@ EOT
         return ['ezplatform:cron:run'];
     }
 }
-
-class_alias(CronRunCommand::class, 'EzSystems\EzPlatformCronBundle\Command\CronRunCommand');

@@ -50,5 +50,3 @@ class CronJobCompilerPass implements CompilerPassInterface
         }
     }
 }
-
-class_alias(CronJobCompilerPass::class, 'EzSystems\EzPlatformCronBundle\DependencyInjection\Compiler\CronJobCompilerPass');
