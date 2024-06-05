@@ -39,5 +39,3 @@ class IbexaCronExtension extends Extension implements PrependExtensionInterface
         $container->prependExtensionConfig('monolog', $config);
     }
 }
-
-class_alias(IbexaCronExtension::class, 'EzSystems\EzPlatformCronBundle\DependencyInjection\EzPlatformCronExtension');

@@ -11,15 +11,13 @@
         "psr-4": {
             "Ibexa\\Cron\\": "src/lib/",
             "Ibexa\\Bundle\\Cron\\": "src/bundle/",
-            "Ibexa\\Contracts\\Cron\\": "src/contracts/",
-            "EzSystems\\EzPlatformCronBundle\\": "src/bundle"
+            "Ibexa\\Contracts\\Cron\\": "src/contracts/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Ibexa\\Tests\\Bundle\\Cron\\": "tests/bundle/",
-            "Ibexa\\Tests\\Cron\\": "tests/lib/",
-            "EzSystems\\EzPlatformCronBundle\\Tests\\": "tests/CronBundle"
+            "Ibexa\\Tests\\Cron\\": "tests/lib/"
         }
     },
     "require": {

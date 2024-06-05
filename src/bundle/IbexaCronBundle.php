@@ -20,5 +20,3 @@ class IbexaCronBundle extends Bundle
         $container->addCompilerPass(new CronJobCompilerPass());
     }
 }
-
-class_alias(IbexaCronBundle::class, 'EzSystems\EzPlatformCronBundle\EzPlatformCronBundle');
