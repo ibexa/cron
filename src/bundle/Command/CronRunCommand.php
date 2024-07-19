@@ -75,7 +75,7 @@ EOT
             $this->logReportsOutput($reports);
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function logReportsOutput(CronReport $reports): void
