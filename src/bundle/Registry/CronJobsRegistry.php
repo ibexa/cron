@@ -15,49 +15,47 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class CronJobsRegistry
 {
-    public const DEFAULT_CATEGORY = 'default';
+    public const string DEFAULT_CATEGORY = 'default';
 
     /**
-     * @var array
+     * @var array<string, \Cron\Job\ShellJob[]>
      */
-    protected $cronJobs = [];
+    protected array $cronJobs = [];
 
-    /**
-     * @var false|string
-     */
-    protected $executable;
+    protected string $executable;
 
-    /**
-     * @var string
-     */
-    protected $environment;
+    protected string $environment;
 
-    /**
-     * @var \Ibexa\Core\MVC\Symfony\SiteAccess
-     */
-    protected $siteaccess;
+    protected SiteAccessServiceInterface $siteAccessService;
 
-    /**
-     * @var string
-     */
-    protected $options;
+    protected string $options;
 
     public function __construct(string $environment, SiteAccess $siteaccess)
     {
         $finder = new PhpExecutableFinder();
 
-        $this->executable = $finder->find();
+        $phpBinary = $finder->find();
+        if (false === $phpBinary) {
+            throw new \LogicException('CronJobsRegistry: Unable to find PHP binary');
+        }
+
+        $this->executable = $phpBinary;
         $this->environment = $environment;
         $this->siteaccess = $siteaccess;
     }
 
     public function addCronJob(Command $command, string $schedule = null, string $category = self::DEFAULT_CATEGORY, string $options = ''): void
     {
+        $commandName = $command->getName();
+        if (null === $commandName) {
+            throw new \LogicException('CronJobsRegistry: Unable to get a command name');
+        }
+
         $command = sprintf(
             '%s %s %s %s --siteaccess=%s --env=%s',
             $this->executable,
             $_SERVER['SCRIPT_NAME'],
-            $command->getName(),
+            $commandName,
             $options,
             $this->siteaccess->name,
             $this->environment
@@ -75,10 +73,6 @@ class CronJobsRegistry
      */
     public function getCategoryCronJobs(string $category): array
     {
-        if (!isset($this->cronJobs[$category])) {
-            return [];
-        }
-
-        return $this->cronJobs[$category];
+        return $this->cronJobs[$category] ?? [];
     }
 }
