@@ -27,13 +27,11 @@ class CronJobCompilerPass implements CompilerPassInterface
             foreach ($tags as $cronJob) {
                 $reference = new Reference($id);
 
-                if (!isset($cronJob['schedule']) || empty($cronJob['schedule'])) {
+                if (empty($cronJob['schedule'])) {
                     throw new \RuntimeException(sprintf('Invalid %s cron job configuration, schedule argument missing', $id));
                 }
 
-                $cronJob['category'] = isset($cronJob['category'])
-                    ? $cronJob['category']
-                    : CronJobsRegistry::DEFAULT_CATEGORY;
+                $cronJob['category'] = $cronJob['category'] ?? CronJobsRegistry::DEFAULT_CATEGORY;
 
                 $registry->addMethodCall('addCronJob', [
                     $reference,
