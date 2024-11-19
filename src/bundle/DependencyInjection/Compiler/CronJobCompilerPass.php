@@ -14,12 +14,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CronJobCompilerPass implements CompilerPassInterface
 {
-    /**
-     * You can modify the container here before it is dumped to PHP code.
-     *
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->has(CronJobsRegistry::class)) {
             return;
