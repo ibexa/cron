@@ -42,7 +42,6 @@ final class CronRunCommand extends Command
                 new InputOption('category', null, InputOption::VALUE_REQUIRED, 'Job category to run', 'default'),
             ])
             ->setName('ibexa:cron:run')
-            ->setAliases(['ezplatform:cron:run'])
             ->setDescription('Perform one-time cron tasks run.')
             ->setHelp(
                 <<<EOT
