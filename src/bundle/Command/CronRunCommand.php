@@ -21,11 +21,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class CronRunCommand extends Command
 {
-    /** @var \Ibexa\Bundle\Cron\Registry\CronJobsRegistry */
-    private $cronJobsRegistry;
+    private CronJobsRegistry $cronJobsRegistry;
 
-    /** @var \Psr\Log\LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $logger, CronJobsRegistry $cronJobsRegistry, ?string $name = null)
     {
@@ -42,7 +40,6 @@ final class CronRunCommand extends Command
                 new InputOption('category', null, InputOption::VALUE_REQUIRED, 'Job category to run', 'default'),
             ])
             ->setName('ibexa:cron:run')
-            ->setAliases(['ezplatform:cron:run'])
             ->setDescription('Perform one-time cron tasks run.')
             ->setHelp(
                 <<<EOT
@@ -70,10 +67,8 @@ EOT
             usleep(10000);
         }
 
-        if ($this->logger) {
-            /** @var \Cron\Report\CronReport $reports */
-            $this->logReportsOutput($reports);
-        }
+        /** @var \Cron\Report\CronReport $reports */
+        $this->logReportsOutput($reports);
 
         return Command::SUCCESS;
     }

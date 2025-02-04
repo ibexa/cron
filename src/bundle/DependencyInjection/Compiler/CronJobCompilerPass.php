@@ -14,12 +14,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CronJobCompilerPass implements CompilerPassInterface
 {
-    /**
-     * You can modify the container here before it is dumped to PHP code.
-     *
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->has(CronJobsRegistry::class)) {
             return;
@@ -32,13 +27,11 @@ class CronJobCompilerPass implements CompilerPassInterface
             foreach ($tags as $cronJob) {
                 $reference = new Reference($id);
 
-                if (!isset($cronJob['schedule']) || empty($cronJob['schedule'])) {
+                if (empty($cronJob['schedule'])) {
                     throw new \RuntimeException(sprintf('Invalid %s cron job configuration, schedule argument missing', $id));
                 }
 
-                $cronJob['category'] = isset($cronJob['category'])
-                    ? $cronJob['category']
-                    : CronJobsRegistry::DEFAULT_CATEGORY;
+                $cronJob['category'] = $cronJob['category'] ?? CronJobsRegistry::DEFAULT_CATEGORY;
 
                 $registry->addMethodCall('addCronJob', [
                     $reference,

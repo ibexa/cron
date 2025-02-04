@@ -8,8 +8,7 @@ services:
     Ibexa\Bundle\Cron\Registry\CronJobsRegistry:
         lazy: true
         arguments:
-            - '%kernel.environment%'
-            - '@Ibexa\Core\MVC\Symfony\SiteAccess'
+            $environment: '%kernel.environment%'
 
     Ibexa\Bundle\Cron\Command\CronRunCommand:
         arguments:
