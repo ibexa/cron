@@ -24,7 +24,6 @@
         "php": " >=8.3",
         "cron/cron": "^1.4",
         "ibexa/core": "~5.0.x-dev",
-        "ibexa/rector": "~5.0.x-dev",
         "symfony/config": "^6.4",
         "symfony/console": "^6.4",
         "symfony/dependency-injection": "^6.4",
@@ -33,7 +32,8 @@
     },
     "require-dev": {
         "ibexa/code-style": "~2.0.0",
-        "ibexa/doctrine-schema": "~5.0.x-dev"
+        "ibexa/doctrine-schema": "~5.0.x-dev",
+        "ibexa/rector": "~5.0.x-dev"
     },
     "scripts": {
         "check-cs": "@fix-cs --dry-run",
