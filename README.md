@@ -9,11 +9,11 @@ This is *not* a replacement for [cron/cron-bundle](https://github.com/Cron/Symfo
 
 ## Setup system cron
 
-Pick your systems cron / scheduling and setup `ezplatform:cron:run` command to run every minute and optionally specifying category _(default: `default`)_:
+Pick your systems cron / scheduling and setup `ibexa:cron:run` command to run every minute and optionally specifying category _(default: `default`)_:
 
 Example for Linux crontab (`crontab -e`):
 ```bash
-* * * * * /path/to/php app/console ezplatform:cron:run [ --category=default] >/dev/null 2>&1
+* * * * * /path/to/php bin/console ibexa:cron:run [ --category=default] >/dev/null 2>&1
 ```
     
 
