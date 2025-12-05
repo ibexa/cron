@@ -1,6 +1,6 @@
 {
     "name": "ibexa/cron",
-    "license": "GPL-2.0-only",
+    "license": ["(GPL-2.0-only or proprietary)"],
     "description": "Simple cron bundle for Ibexa",
     "type": "ibexa-bundle",
     "replace": {
