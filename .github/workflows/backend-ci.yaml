@@ -13,9 +13,11 @@ jobs:
         runs-on: "ubuntu-26.04"
         strategy:
             matrix:
+                # one PHP version only: php-cs-fixer can report different
+                # results per version, so a matrix makes the check ambiguous.
+                # Lowest supported version for this branch.
                 php:
                     - '7.4'
-                    - '8.1'
         steps:
             - uses: actions/checkout@v7
 
