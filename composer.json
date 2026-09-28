@@ -22,7 +22,7 @@
     },
     "require": {
         "php": " >=8.3",
-        "cron/cron": "^1.4",
+        "cron/cron": "^1.4 || dev-master",
         "ibexa/core": "~6.0.x-dev",
         "symfony/config": "^7.4 || ^8.1",
         "symfony/console": "^7.4 || ^8.1",
