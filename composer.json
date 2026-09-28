@@ -24,11 +24,11 @@
         "php": " >=8.3",
         "cron/cron": "^1.4",
         "ibexa/core": "~6.0.x-dev",
-        "symfony/config": "^7.4",
-        "symfony/console": "^7.4",
-        "symfony/dependency-injection": "^7.4",
-        "symfony/http-kernel": "^7.4",
-        "symfony/process": "^7.4"
+        "symfony/config": "^7.4 || ^8.1",
+        "symfony/console": "^7.4 || ^8.1",
+        "symfony/dependency-injection": "^7.4 || ^8.1",
+        "symfony/http-kernel": "^7.4 || ^8.1",
+        "symfony/process": "^7.4 || ^8.1"
     },
     "require-dev": {
         "ibexa/code-style": "~2.0.0",
