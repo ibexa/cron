@@ -21,7 +21,7 @@
         }
     },
     "require": {
-        "php": " >=8.3",
+        "php": ">=8.5",
         "cron/cron": "^1.4 || dev-master",
         "ibexa/core": "~6.0.x-dev",
         "symfony/config": "^8.1",
