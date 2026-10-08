@@ -21,14 +21,14 @@
         }
     },
     "require": {
-        "php": " >=8.3",
+        "php": ">=8.5",
         "cron/cron": "^1.4 || dev-master",
         "ibexa/core": "~6.0.x-dev",
-        "symfony/config": "^7.4 || ^8.1",
-        "symfony/console": "^7.4 || ^8.1",
-        "symfony/dependency-injection": "^7.4 || ^8.1",
-        "symfony/http-kernel": "^7.4 || ^8.1",
-        "symfony/process": "^7.4 || ^8.1"
+        "symfony/config": "^8.1",
+        "symfony/console": "^8.1",
+        "symfony/dependency-injection": "^8.1",
+        "symfony/http-kernel": "^8.1",
+        "symfony/process": "^8.1"
     },
     "require-dev": {
         "ibexa/code-style": "~2.0.0",
