@@ -70,6 +70,7 @@ EOT
         $cron->setExecutor(new Executor());
         $cron->setResolver($resolver);
 
+        /** @var CronReport $reports */
         $reports = $cron->run();
 
         while ($cron->isRunning()) {
@@ -77,7 +78,6 @@ EOT
         }
 
         if ($this->logger) {
-            /** @var CronReport $reports */
             $this->logReportsOutput($reports);
         }
 
