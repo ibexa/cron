@@ -27,8 +27,11 @@ final class CronRunCommand extends Command
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $logger, CronJobsRegistry $cronJobsRegistry, ?string $name = null)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        CronJobsRegistry $cronJobsRegistry,
+        ?string $name = null
+    ) {
         parent::__construct($name);
 
         $this->logger = $logger;
@@ -50,8 +53,10 @@ EOT
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ): int {
         $category = $input->getOption('category');
         $cronJobs = $this->cronJobsRegistry->getCategoryCronJobs($category);
 
@@ -61,13 +66,13 @@ EOT
         $cron->setExecutor(new Executor());
         $cron->setResolver($resolver);
 
+        /** @var CronReport $reports */
         $reports = $cron->run();
 
         while ($cron->isRunning()) {
             usleep(10000);
         }
 
-        /** @var \Cron\Report\CronReport $reports */
         $this->logReportsOutput($reports);
 
         return Command::SUCCESS;

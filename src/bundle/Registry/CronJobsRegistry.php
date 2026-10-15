@@ -18,7 +18,7 @@ class CronJobsRegistry
     public const string DEFAULT_CATEGORY = 'default';
 
     /**
-     * @var array<string, \Cron\Job\ShellJob[]>
+     * @var array<string, ShellJob[]>
      */
     protected array $cronJobs = [];
 
@@ -30,8 +30,10 @@ class CronJobsRegistry
 
     protected string $options;
 
-    public function __construct(string $environment, SiteAccessServiceInterface $siteAccessService)
-    {
+    public function __construct(
+        string $environment,
+        SiteAccessServiceInterface $siteAccessService
+    ) {
         $finder = new PhpExecutableFinder();
 
         $phpBinary = $finder->find();
@@ -44,8 +46,12 @@ class CronJobsRegistry
         $this->siteAccessService = $siteAccessService;
     }
 
-    public function addCronJob(Command $command, string $schedule = null, string $category = self::DEFAULT_CATEGORY, string $options = ''): void
-    {
+    public function addCronJob(
+        Command $command,
+        string $schedule = null,
+        string $category = self::DEFAULT_CATEGORY,
+        string $options = ''
+    ): void {
         $commandName = $command->getName();
         if (null === $commandName) {
             throw new \LogicException('CronJobsRegistry: Unable to get a command name');
@@ -69,7 +75,7 @@ class CronJobsRegistry
     }
 
     /**
-     * @return \Cron\Job\ShellJob[]
+     * @return ShellJob[]
      */
     public function getCategoryCronJobs(string $category): array
     {
