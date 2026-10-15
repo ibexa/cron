@@ -22,14 +22,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class CronRunCommand extends Command implements BackwardCompatibleCommand
 {
-    /** @var \Ibexa\Bundle\Cron\Registry\CronJobsRegistry */
+    /** @var CronJobsRegistry */
     private $cronJobsRegistry;
 
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(LoggerInterface $logger, CronJobsRegistry $cronJobsRegistry, ?string $name = null)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        CronJobsRegistry $cronJobsRegistry,
+        ?string $name = null
+    ) {
         parent::__construct($name);
 
         $this->logger = $logger;
@@ -54,8 +57,10 @@ EOT
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ): int {
         $category = $input->getOption('category');
         $cronJobs = $this->cronJobsRegistry->getCategoryCronJobs($category);
 
@@ -65,6 +70,7 @@ EOT
         $cron->setExecutor(new Executor());
         $cron->setResolver($resolver);
 
+        /** @var CronReport $reports */
         $reports = $cron->run();
 
         while ($cron->isRunning()) {
@@ -72,7 +78,6 @@ EOT
         }
 
         if ($this->logger) {
-            /** @var \Cron\Report\CronReport $reports */
             $this->logReportsOutput($reports);
         }
 

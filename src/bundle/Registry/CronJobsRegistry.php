@@ -33,7 +33,7 @@ class CronJobsRegistry
     protected $environment;
 
     /**
-     * @var \Ibexa\Core\MVC\Symfony\SiteAccess
+     * @var SiteAccess
      */
     protected $siteaccess;
 
@@ -42,8 +42,10 @@ class CronJobsRegistry
      */
     protected $options;
 
-    public function __construct(string $environment, SiteAccess $siteaccess)
-    {
+    public function __construct(
+        string $environment,
+        SiteAccess $siteaccess
+    ) {
         $finder = new PhpExecutableFinder();
 
         $this->executable = $finder->find();
@@ -51,8 +53,12 @@ class CronJobsRegistry
         $this->siteaccess = $siteaccess;
     }
 
-    public function addCronJob(Command $command, string $schedule = null, string $category = self::DEFAULT_CATEGORY, string $options = ''): void
-    {
+    public function addCronJob(
+        Command $command,
+        string $schedule = null,
+        string $category = self::DEFAULT_CATEGORY,
+        string $options = ''
+    ): void {
         $command = sprintf(
             '%s %s %s %s --siteaccess=%s --env=%s',
             $this->executable,
@@ -71,7 +77,7 @@ class CronJobsRegistry
     }
 
     /**
-     * @return \Cron\Job\ShellJob[]
+     * @return ShellJob[]
      */
     public function getCategoryCronJobs(string $category): array
     {

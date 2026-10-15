@@ -22,8 +22,10 @@ class IbexaCronExtension extends Extension implements PrependExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
-    {
+    public function load(
+        array $configs,
+        ContainerBuilder $container
+    ) {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
     }
@@ -31,7 +33,7 @@ class IbexaCronExtension extends Extension implements PrependExtensionInterface
     /**
      * Allow an extension to prepend the extension configurations.
      *
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     * @param ContainerBuilder $container
      */
     public function prepend(ContainerBuilder $container)
     {
