@@ -8,6 +8,7 @@
 namespace Ibexa\Bundle\Cron\DependencyInjection\Compiler;
 
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -28,7 +29,7 @@ class CronJobCompilerPass implements CompilerPassInterface
                 $reference = new Reference($id);
 
                 if (empty($cronJob['schedule'])) {
-                    throw new \RuntimeException(sprintf('Invalid %s cron job configuration, schedule argument missing', $id));
+                    throw new RuntimeException(sprintf('Invalid %s cron job configuration, schedule argument missing', $id));
                 }
 
                 $this->triggerScheduleDeprecations($id, $cronJob['schedule']);

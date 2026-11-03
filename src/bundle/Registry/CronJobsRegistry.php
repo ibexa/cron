@@ -10,6 +10,7 @@ namespace Ibexa\Bundle\Cron\Registry;
 use Cron\Job\ShellJob;
 use Cron\Schedule\CrontabSchedule;
 use Ibexa\Core\MVC\Symfony\SiteAccess\SiteAccessServiceInterface;
+use LogicException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -38,7 +39,7 @@ class CronJobsRegistry
 
         $phpBinary = $finder->find();
         if (false === $phpBinary) {
-            throw new \LogicException('CronJobsRegistry: Unable to find PHP binary');
+            throw new LogicException('CronJobsRegistry: Unable to find PHP binary');
         }
 
         $this->executable = $phpBinary;
@@ -63,7 +64,7 @@ class CronJobsRegistry
 
         $commandName = $command->getName();
         if (null === $commandName) {
-            throw new \LogicException('CronJobsRegistry: Unable to get a command name');
+            throw new LogicException('CronJobsRegistry: Unable to get a command name');
         }
 
         $command = sprintf(
