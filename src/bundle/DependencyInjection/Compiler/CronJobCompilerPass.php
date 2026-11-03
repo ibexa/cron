@@ -78,7 +78,7 @@ class CronJobCompilerPass implements CompilerPassInterface
         }
 
         foreach ($messages as $message) {
-            trigger_deprecation('ibexa/cron', '5.0.x', 'Cron job "%s" schedule "%s" %s', $id, $schedule, $message);
+            trigger_deprecation('ibexa/cron', '5.0.11', 'Cron job "%s" schedule "%s" %s', $id, $schedule, $message);
         }
     }
 }

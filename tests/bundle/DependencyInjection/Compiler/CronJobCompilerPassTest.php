@@ -86,7 +86,7 @@ final class CronJobCompilerPassTest extends TestCase
         $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => $schedule]));
 
         $this->expectUserDeprecationMessage(
-            sprintf('Since ibexa/cron 5.0.x: Cron job "my.job" schedule "%s" %s', $schedule, $expectedMessage)
+            sprintf('Since ibexa/cron 5.0.11: Cron job "my.job" schedule "%s" %s', $schedule, $expectedMessage)
         );
 
         (new CronJobCompilerPass())->process($this->container);

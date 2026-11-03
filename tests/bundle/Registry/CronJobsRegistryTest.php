@@ -93,7 +93,7 @@ final class CronJobsRegistryTest extends TestCase
     #[IgnoreDeprecations]
     public function testNullScheduleIsDeprecated(): void
     {
-        $this->expectUserDeprecationMessage('Since ibexa/cron 5.0.x: Passing null as $schedule to Ibexa\\Bundle\\Cron\\Registry\\CronJobsRegistry::addCronJob() is deprecated. Since 6.0 an \\InvalidArgumentException is thrown.');
+        $this->expectUserDeprecationMessage('Since ibexa/cron 5.0.11: Passing null as $schedule to Ibexa\\Bundle\\Cron\\Registry\\CronJobsRegistry::addCronJob() is deprecated. Since 6.0 an \\InvalidArgumentException is thrown.');
 
         // 5.0 does not throw: null is handed on to cron/cron; only the notice is under test
         $this->createRegistry()->addCronJob(new Command('app:foo'), null);
