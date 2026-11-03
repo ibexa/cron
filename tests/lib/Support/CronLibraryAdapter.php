@@ -9,6 +9,9 @@ declare(strict_types=1);
 namespace Ibexa\Tests\Cron\Support;
 
 use Cron\Exception\InvalidPatternException;
+use DateTime;
+use DateTimeImmutable;
+use Throwable;
 
 /**
  * SWAP POINT for IBX-13041 (1/2): the only place in the tests that reads cron/cron objects.
@@ -22,9 +25,9 @@ final class CronLibraryAdapter
      */
     public static function isDue(
         object $job,
-        \DateTimeImmutable $now
+        DateTimeImmutable $now
     ): bool {
-        return $job->getSchedule()->valid(\DateTime::createFromImmutable($now));
+        return $job->getSchedule()->valid(DateTime::createFromImmutable($now));
     }
 
     /**
@@ -38,7 +41,7 @@ final class CronLibraryAdapter
     /**
      * The exception CronJobsRegistry::addCronJob() throws for an invalid schedule.
      *
-     * @return class-string<\Throwable>
+     * @return class-string<Throwable>
      */
     public static function invalidScheduleException(): string
     {

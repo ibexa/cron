@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Ibexa\Tests\Bundle\Cron\Registry;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Ibexa\Core\MVC\Symfony\SiteAccess;
 use Ibexa\Tests\Cron\Support\CronLibraryAdapter;
@@ -90,7 +92,7 @@ final class ScheduleSemanticsTest extends TestCase
 
         self::assertSame($expected, CronLibraryAdapter::isDue(
             $registry->getCategoryCronJobs('default')[0],
-            new \DateTimeImmutable($now, new \DateTimeZone('UTC'))
+            new DateTimeImmutable($now, new DateTimeZone('UTC'))
         ));
     }
 

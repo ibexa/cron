@@ -11,6 +11,7 @@ namespace Ibexa\Tests\Bundle\Cron\DependencyInjection\Compiler;
 use Ibexa\Bundle\Cron\DependencyInjection\Compiler\CronJobCompilerPass;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -32,7 +33,7 @@ final class CronJobCompilerPassTest extends TestCase
     {
         $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['category' => 'x']));
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid my.job cron job configuration, schedule argument missing');
 
         (new CronJobCompilerPass())->process($this->container);

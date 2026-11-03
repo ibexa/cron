@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Ibexa\Tests\Bundle\Cron\Command;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use Ibexa\Bundle\Cron\Command\CronRunCommand;
 use Ibexa\Core\MVC\Symfony\SiteAccess;
 use Ibexa\Tests\Cron\Support\ShellJobRegistry;
@@ -251,7 +253,7 @@ final class CronRunCommandTest extends TestCase
      */
     public function testTzEnvironmentVariableDecidesWhichHourIsNow(): void
     {
-        $kiritimatiHour = (int)(new \DateTimeImmutable('now', new \DateTimeZone('Pacific/Kiritimati')))->format('G');
+        $kiritimatiHour = (int)(new DateTimeImmutable('now', new DateTimeZone('Pacific/Kiritimati')))->format('G');
         $pattern = sprintf('* %d,%d * * *', $kiritimatiHour, ($kiritimatiHour + 1) % 24);
         $this->registry->addShellJob($pattern, 'echo tz-job');
 
