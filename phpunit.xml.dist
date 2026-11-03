@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+        bootstrap="vendor/autoload.php"
+        failOnWarning="true"
+        colors="true"
+>
+    <php>
+        <ini name="date.timezone" value="UTC" />
+    </php>
+    <testsuites>
+        <testsuite name="bundle">
+            <directory>tests/bundle</directory>
+        </testsuite>
+        <testsuite name="lib">
+            <directory>tests/lib</directory>
+        </testsuite>
+    </testsuites>
+    <groups>
+        <exclude>
+            <group>slow</group>
+        </exclude>
+    </groups>
+</phpunit>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+        bootstrap="tests/integration/bootstrap.php"
+        failOnWarning="true"
+        colors="true"
+>
+    <php>
+        <ini name="intl.default_locale" value="en" />
+        <ini name="date.timezone" value="UTC" />
+        <env name="KERNEL_CLASS" value="Ibexa\Tests\Integration\Cron\IbexaTestKernel" />
+        <env name="SEARCH_ENGINE" value="legacy" />
+        <env name="DATABASE_URL" value="sqlite://i@i/var/test.db" />
+    </php>
+    <testsuites>
+        <testsuite name="integration">
+            <directory>tests/integration</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

@@ -19,6 +19,7 @@
         "psr-4": {
             "Ibexa\\Tests\\Bundle\\Cron\\": "tests/bundle/",
             "Ibexa\\Tests\\Cron\\": "tests/lib/",
+            "Ibexa\\Tests\\Integration\\Cron\\": "tests/integration/",
             "EzSystems\\EzPlatformCronBundle\\Tests\\": "tests/CronBundle"
         }
     },
@@ -35,11 +36,15 @@
     "require-dev": {
         "ibexa/code-style": "~2.3.1",
         "ibexa/doctrine-schema": "~4.6.0@dev",
-        "friendsofphp/php-cs-fixer": "^3.0"
+        "ibexa/test-core": "~4.6.x-dev",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpunit/phpunit": "^9"
     },
     "scripts": {
         "check-cs": "@fix-cs --dry-run",
-        "fix-cs": "php-cs-fixer fix --config=.php-cs-fixer.php -v --show-progress=dots"
+        "fix-cs": "php-cs-fixer fix --config=.php-cs-fixer.php -v --show-progress=dots",
+        "test": "phpunit -c phpunit.xml.dist",
+        "test-integration": "phpunit -c phpunit.integration.xml"
     },
     "extra": {
         "branch-alias": {
