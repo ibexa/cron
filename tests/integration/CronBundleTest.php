@@ -41,7 +41,7 @@ final class CronBundleTest extends IbexaKernelTestCase
         $commandLines = $this->commandLines('default');
 
         self::assertCount(1, $commandLines);
-        self::assertStringContainsString(' test:cron:default ', $commandLines[0]);
+        self::assertStringEndsWith(' test:cron:default  --siteaccess=default --env=test', $commandLines[0]);
     }
 
     public function testTaggedServiceWithCategoryAndOptions(): void
