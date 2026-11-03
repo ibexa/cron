@@ -74,7 +74,10 @@ final class CronJobsRegistryTest extends TestCase
 
     public function testUnknownCategoryReturnsEmptyArray(): void
     {
-        self::assertSame([], $this->createRegistry()->getCategoryCronJobs('nope'));
+        $registry = $this->createRegistry();
+        $registry->addCronJob(new Command('app:a'), '* * * * *');
+
+        self::assertSame([], $registry->getCategoryCronJobs('nope'));
     }
 
     private function createRegistry(): CronJobsRegistry
