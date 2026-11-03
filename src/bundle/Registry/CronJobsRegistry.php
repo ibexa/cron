@@ -50,7 +50,7 @@ class CronJobsRegistry
 
     public function addCronJob(
         Command $command,
-        string $schedule = null,
+        ?string $schedule = null,
         string $category = self::DEFAULT_CATEGORY,
         string $options = ''
     ): void {

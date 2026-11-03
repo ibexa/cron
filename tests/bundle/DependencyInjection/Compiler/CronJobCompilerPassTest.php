@@ -117,6 +117,14 @@ final class CronJobCompilerPassTest extends TestCase
             '0 0 * * 5,7',
             'uses 7 in day-of-week. Since 6.0 it means Sunday, currently it never matches.',
         ];
+        yield 'day-of-week range ending in 7' => [
+            '0 0 * * 6-7',
+            'uses 7 in day-of-week. Since 6.0 it means Sunday, currently it never matches.',
+        ];
+        yield 'descending hour range' => [
+            '0 22-2 * * *',
+            'uses a descending range "22-2". It currently matches every value between the two bounds; since 6.0 such a schedule is rejected. Use an ascending range or a list instead.',
+        ];
         yield 'year field' => [
             '0 0 * * * 2030',
             'has a 6th (year) field. Since 6.0 it is rejected, currently it is ignored.',
@@ -157,6 +165,8 @@ final class CronJobCompilerPassTest extends TestCase
         yield 'step in minute' => ['*/15 * * * *'];
         yield 'first of month' => ['0 0 1 * *'];
         yield 'mondays' => ['0 0 * * 1'];
+        yield 'step in day-of-week' => ['* * * * */7'];
+        yield 'ascending hour range' => ['0 2-22 * * *'];
         yield 'macro' => ['@daily'];
     }
 }

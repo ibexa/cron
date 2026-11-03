@@ -61,8 +61,17 @@ class CronJobCompilerPass implements CompilerPassInterface
         if (str_contains($fields[2], '*/') || str_contains($fields[3], '*/')) {
             $messages[] = 'uses a step (*/n) in day-of-month or month. Since 6.0 steps count from the first value of the field (day 1, month 1), currently from 0.';
         }
-        if (preg_match('/(^|[^\d])7([^\d]|$)/', $fields[4]) === 1) {
+        if (preg_match('/(^|[,-])7(,|$)/', $fields[4]) === 1) {
             $messages[] = 'uses 7 in day-of-week. Since 6.0 it means Sunday, currently it never matches.';
+        }
+        foreach (array_slice($fields, 0, 5) as $field) {
+            if (preg_match_all('/(\d+)-(\d+)/', $field, $ranges, PREG_SET_ORDER) > 0) {
+                foreach ($ranges as $range) {
+                    if ((int) $range[1] > (int) $range[2]) {
+                        $messages[] = sprintf('uses a descending range "%s". It currently matches every value between the two bounds; since 6.0 such a schedule is rejected. Use an ascending range or a list instead.', $range[0]);
+                    }
+                }
+            }
         }
         if (isset($fields[5])) {
             $messages[] = 'has a 6th (year) field. Since 6.0 it is rejected, currently it is ignored.';
