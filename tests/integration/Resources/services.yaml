@@ -1,0 +1,18 @@
+when@test:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        # monolog-bundle is not a dependency of this package; CronRunCommand wires this channel logger.
+        monolog.logger.cronjob:
+            alias: logger
+
+        Ibexa\Tests\Integration\Cron\Stubs\DefaultCategoryCommand:
+            tags:
+                - { name: ibexa.cron.job, schedule: '* * * * *' }
+
+        Ibexa\Tests\Integration\Cron\Stubs\ReportsCommand:
+            tags:
+                - { name: ibexa.cron.job, schedule: '0 * * * *', category: reports, options: '--foo=bar -v' }
+                - { name: ibexa.cron.job, schedule: '30 * * * *', category: reports }
