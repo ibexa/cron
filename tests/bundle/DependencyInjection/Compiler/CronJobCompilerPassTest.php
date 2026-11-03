@@ -90,6 +90,22 @@ final class CronJobCompilerPassTest extends TestCase
         );
 
         (new CronJobCompilerPass())->process($this->container);
+
+        self::assertCount(1, $this->container->getDefinition(CronJobsRegistry::class)->getMethodCalls());
+    }
+
+    public function testEveryApplicableDeprecationIsTriggeredInOrder(): void
+    {
+        $schedule = '0 0 */2 * 5-7';
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => $schedule]));
+
+        $prefix = sprintf('Since ibexa/cron 5.0.11: Cron job "my.job" schedule "%s" ', $schedule);
+
+        self::assertSame([
+            $prefix . 'restricts both day-of-month and day-of-week. They are matched with AND; since 6.0 they are matched with OR (standard cron). Restrict only one of them to keep the current behaviour.',
+            $prefix . 'uses a step (*/n) in day-of-month or month. Since 6.0 steps count from the first value of the field (day 1, month 1), currently from 0.',
+            $prefix . 'uses 7 in day-of-week. Since 6.0 it means Sunday, currently it never matches.',
+        ], $this->collectDeprecations());
     }
 
     /**
@@ -125,6 +141,10 @@ final class CronJobCompilerPassTest extends TestCase
             '0 22-2 * * *',
             'uses a descending range "22-2". It currently matches every value between the two bounds; since 6.0 such a schedule is rejected. Use an ascending range or a list instead.',
         ];
+        yield 'descending range outside hour field' => [
+            '0 0 * * 5-1',
+            'uses a descending range "5-1". It currently matches every value between the two bounds; since 6.0 such a schedule is rejected. Use an ascending range or a list instead.',
+        ];
         yield 'year field' => [
             '0 0 * * * 2030',
             'has a 6th (year) field. Since 6.0 it is rejected, currently it is ignored.',
@@ -136,21 +156,7 @@ final class CronJobCompilerPassTest extends TestCase
     {
         $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => $schedule]));
 
-        $deprecations = [];
-        set_error_handler(static function (
-            int $errno,
-            string $errstr
-        ) use (&$deprecations): bool {
-            $deprecations[] = $errstr;
-
-            return true;
-        }, E_USER_DEPRECATED);
-
-        try {
-            (new CronJobCompilerPass())->process($this->container);
-        } finally {
-            restore_error_handler();
-        }
+        $deprecations = $this->collectDeprecations();
 
         self::assertSame([], $deprecations);
     }
@@ -167,6 +173,31 @@ final class CronJobCompilerPassTest extends TestCase
         yield 'mondays' => ['0 0 * * 1'];
         yield 'step in day-of-week' => ['* * * * */7'];
         yield 'ascending hour range' => ['0 2-22 * * *'];
+        yield 'too few fields' => ['* * * *'];
         yield 'macro' => ['@daily'];
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function collectDeprecations(): array
+    {
+        $deprecations = [];
+        set_error_handler(static function (
+            int $errno,
+            string $errstr
+        ) use (&$deprecations): bool {
+            $deprecations[] = $errstr;
+
+            return true;
+        }, E_USER_DEPRECATED);
+
+        try {
+            (new CronJobCompilerPass())->process($this->container);
+        } finally {
+            restore_error_handler();
+        }
+
+        return $deprecations;
     }
 }
