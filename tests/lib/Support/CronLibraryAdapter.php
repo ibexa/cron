@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Ibexa\Tests\Cron\Support;
 
+use Cron\Exception\InvalidPatternException;
+
 /**
  * SWAP POINT for IBX-13041 (1/2): the only place in the tests that reads cron/cron objects.
  * After cron/cron is replaced by dragonmantank/cron-expression + symfony/process, re-implement
@@ -40,6 +42,6 @@ final class CronLibraryAdapter
      */
     public static function invalidScheduleException(): string
     {
-        return \Cron\Exception\InvalidPatternException::class;
+        return InvalidPatternException::class;
     }
 }
