@@ -6,6 +6,16 @@
  */
 declare(strict_types=1);
 
+use Ibexa\Contracts\Test\Core\Bootstrapper\Bootstrapper;
+use Ibexa\Contracts\Test\Core\Bootstrapper\DatabaseSchemaHook;
+use Ibexa\Contracts\Test\Core\Bootstrapper\FixtureHook;
+
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 chdir(dirname(__DIR__, 2));
+
+(new Bootstrapper())->bootstrap(null, [
+    Bootstrapper::class => [Bootstrapper::OPTION_PREPARE_DATABASE => false],
+    DatabaseSchemaHook::class => [DatabaseSchemaHook::OPTION_LOAD_SCHEMA => false],
+    FixtureHook::class => [FixtureHook::OPTION_LOAD_FIXTURES => false],
+]);
