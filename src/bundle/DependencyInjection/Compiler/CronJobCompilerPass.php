@@ -31,6 +31,8 @@ class CronJobCompilerPass implements CompilerPassInterface
                     throw new \RuntimeException(sprintf('Invalid %s cron job configuration, schedule argument missing', $id));
                 }
 
+                $this->triggerScheduleDeprecations($id, $cronJob['schedule']);
+
                 $cronJob['category'] = $cronJob['category'] ?? CronJobsRegistry::DEFAULT_CATEGORY;
 
                 $registry->addMethodCall('addCronJob', [
@@ -40,6 +42,34 @@ class CronJobCompilerPass implements CompilerPassInterface
                     $cronJob['options'] ?? '',
                 ]);
             }
+        }
+    }
+
+    private function triggerScheduleDeprecations(
+        string $id,
+        string $schedule
+    ): void {
+        $fields = preg_split('/\s+/', trim($schedule)) ?: [];
+        if (str_starts_with($schedule, '@') || count($fields) < 5) {
+            return;
+        }
+
+        $messages = [];
+        if ($fields[2] !== '*' && $fields[4] !== '*') {
+            $messages[] = 'restricts both day-of-month and day-of-week. They are matched with AND; since 6.0 they are matched with OR (standard cron). Restrict only one of them to keep the current behaviour.';
+        }
+        if (str_contains($fields[2], '*/') || str_contains($fields[3], '*/')) {
+            $messages[] = 'uses a step (*/n) in day-of-month or month. Since 6.0 steps count from the first value of the field (day 1, month 1), currently from 0.';
+        }
+        if (preg_match('/(^|[^\d])7([^\d]|$)/', $fields[4]) === 1) {
+            $messages[] = 'uses 7 in day-of-week. Since 6.0 it means Sunday, currently it never matches.';
+        }
+        if (isset($fields[5])) {
+            $messages[] = 'has a 6th (year) field. Since 6.0 it is rejected, currently it is ignored.';
+        }
+
+        foreach ($messages as $message) {
+            trigger_deprecation('ibexa/cron', '5.0.x', 'Cron job "%s" schedule "%s" %s', $id, $schedule, $message);
         }
     }
 }
