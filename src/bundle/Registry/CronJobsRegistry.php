@@ -10,6 +10,7 @@ namespace Ibexa\Bundle\Cron\Registry;
 use Cron\Job\ShellJob;
 use Cron\Schedule\CrontabSchedule;
 use Ibexa\Core\MVC\Symfony\SiteAccess\SiteAccessServiceInterface;
+use LogicException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -18,7 +19,7 @@ class CronJobsRegistry
     public const string DEFAULT_CATEGORY = 'default';
 
     /**
-     * @var array<string, ShellJob[]>
+     * @var array<string, ShellJob[]> Since 6.0: array<string, list<\Ibexa\Bundle\Cron\Registry\CronJob>>, as cron/cron is dropped.
      */
     protected array $cronJobs = [];
 
@@ -38,7 +39,7 @@ class CronJobsRegistry
 
         $phpBinary = $finder->find();
         if (false === $phpBinary) {
-            throw new \LogicException('CronJobsRegistry: Unable to find PHP binary');
+            throw new LogicException('CronJobsRegistry: Unable to find PHP binary');
         }
 
         $this->executable = $phpBinary;
@@ -48,13 +49,22 @@ class CronJobsRegistry
 
     public function addCronJob(
         Command $command,
-        string $schedule = null,
+        ?string $schedule = null,
         string $category = self::DEFAULT_CATEGORY,
         string $options = ''
     ): void {
+        if (null === $schedule) {
+            trigger_deprecation(
+                'ibexa/cron',
+                '5.0.11',
+                'Passing null as $schedule to %s() is deprecated. Since 6.0 an \InvalidArgumentException is thrown.',
+                __METHOD__
+            );
+        }
+
         $commandName = $command->getName();
         if (null === $commandName) {
-            throw new \LogicException('CronJobsRegistry: Unable to get a command name');
+            throw new LogicException('CronJobsRegistry: Unable to get a command name');
         }
 
         $command = sprintf(
@@ -75,7 +85,7 @@ class CronJobsRegistry
     }
 
     /**
-     * @return ShellJob[]
+     * @return ShellJob[] Since 6.0: list<\Ibexa\Bundle\Cron\Registry\CronJob>, as cron/cron is dropped.
      */
     public function getCategoryCronJobs(string $category): array
     {

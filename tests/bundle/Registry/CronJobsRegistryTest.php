@@ -14,6 +14,7 @@ use Ibexa\Core\MVC\Symfony\SiteAccess\SiteAccessServiceInterface;
 use Ibexa\Tests\Cron\Support\CronLibraryAdapter;
 use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -87,6 +88,15 @@ final class CronJobsRegistryTest extends TestCase
         $this->expectExceptionMessage('Unable to get a command name');
 
         $this->createRegistry()->addCronJob(new class() extends Command {}, '* * * * *');
+    }
+
+    #[IgnoreDeprecations]
+    public function testNullScheduleIsDeprecated(): void
+    {
+        $this->expectUserDeprecationMessage('Since ibexa/cron 5.0.11: Passing null as $schedule to Ibexa\\Bundle\\Cron\\Registry\\CronJobsRegistry::addCronJob() is deprecated. Since 6.0 an \\InvalidArgumentException is thrown.');
+
+        // 5.0 does not throw: null is handed on to cron/cron; only the notice is under test
+        $this->createRegistry()->addCronJob(new Command('app:foo'), null);
     }
 
     private function createRegistry(): CronJobsRegistry
