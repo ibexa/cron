@@ -118,8 +118,7 @@ final class ScheduleSemanticsTest extends TestCase
     {
         $registry = $this->createRegistry();
 
-        // Library-agnostic: cron/cron throws InvalidPatternException, dragonmantank \InvalidArgumentException.
-        $this->expectException(\Exception::class);
+        $this->expectException(CronLibraryAdapter::invalidScheduleException());
         $registry->addCronJob(new Command('app:foo'), $pattern);
     }
 

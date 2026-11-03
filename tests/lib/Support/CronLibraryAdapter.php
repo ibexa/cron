@@ -32,4 +32,14 @@ final class CronLibraryAdapter
     {
         return $job->getProcess()->getCommandLine();
     }
+
+    /**
+     * The exception CronJobsRegistry::addCronJob() throws for an invalid schedule.
+     *
+     * @return class-string<\Throwable>
+     */
+    public static function invalidScheduleException(): string
+    {
+        return \Cron\Exception\InvalidPatternException::class;
+    }
 }
