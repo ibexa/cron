@@ -18,9 +18,7 @@ class CronJobsRegistry
     public const string DEFAULT_CATEGORY = 'default';
 
     /**
-     * @var array<string, ShellJob[]>
-     *
-     * @deprecated 5.0.x Relying on \Cron\Job\ShellJob elements is deprecated. Since 6.0 the elements are \Ibexa\Bundle\Cron\Registry\CronJob, as the cron/cron dependency is dropped.
+     * @var array<string, ShellJob[]> Since 6.0: array<string, list<\Ibexa\Bundle\Cron\Registry\CronJob>>, as cron/cron is dropped.
      */
     protected array $cronJobs = [];
 
@@ -86,9 +84,7 @@ class CronJobsRegistry
     }
 
     /**
-     * @return ShellJob[]
-     *
-     * @deprecated 5.0.x Relying on returned \Cron\Job\ShellJob objects is deprecated. Since 6.0 the method returns list<\Ibexa\Bundle\Cron\Registry\CronJob>, as the cron/cron dependency is dropped.
+     * @return ShellJob[] Since 6.0: list<\Ibexa\Bundle\Cron\Registry\CronJob>, as cron/cron is dropped.
      */
     public function getCategoryCronJobs(string $category): array
     {
