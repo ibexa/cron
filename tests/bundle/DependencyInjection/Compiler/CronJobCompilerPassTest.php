@@ -38,6 +38,35 @@ final class CronJobCompilerPassTest extends TestCase
         (new CronJobCompilerPass())->process($this->container);
     }
 
+    public function testInvalidScheduleThrows(): void
+    {
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '0 0 * * * 2030']));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid my.job cron job schedule "0 0 * * * 2030"');
+
+        (new CronJobCompilerPass())->process($this->container);
+    }
+
+    public function testDescendingRangeThrows(): void
+    {
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '0 22-2 * * *']));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid my.job cron job schedule "0 22-2 * * *", descending range "22-2" is not supported.');
+
+        (new CronJobCompilerPass())->process($this->container);
+    }
+
+    public function testAscendingRangeIsRegistered(): void
+    {
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '0 2-22 * * 1-5']));
+
+        (new CronJobCompilerPass())->process($this->container);
+
+        self::assertCount(1, $this->container->getDefinition(CronJobsRegistry::class)->getMethodCalls());
+    }
+
     public function testDefaultCategoryAndEmptyOptionsAreApplied(): void
     {
         $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '* * * * *']));
