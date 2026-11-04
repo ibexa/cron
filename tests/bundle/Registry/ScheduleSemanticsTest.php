@@ -20,8 +20,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 
 /**
- * Pins the CURRENT crontab semantics of schedules passed to CronJobsRegistry::addCronJob().
- * Keys prefixed "pitfall-N" are behaviours that differ from standard (Vixie) cron.
+ * Pins the crontab semantics of schedules passed to CronJobsRegistry::addCronJob() (standard cron,
+ * via dragonmantank/cron-expression). Keys prefixed "pitfall-N" are behaviours that used to differ
+ * from standard (Vixie) cron under cron/cron and are now aligned with it.
  */
 #[CoversClass(CronJobsRegistry::class)]
 final class ScheduleSemanticsTest extends TestCase
@@ -45,28 +46,33 @@ final class ScheduleSemanticsTest extends TestCase
         yield 'specific day and month' => ['0 0 25 12 *', '2026-12-25 00:00', true];
         yield 'dow only' => ['0 0 * * 1', '2026-06-08 00:00', true];
 
-        yield 'pitfall-2 dom+dow AND, monday the 1st' => ['0 0 1 * 1', '2026-06-01 00:00', true];
-        yield 'pitfall-2 dom+dow AND, monday 8th' => ['0 0 1 * 1', '2026-06-08 00:00', false];
-        yield 'pitfall-2 dom+dow AND, wednesday the 1st' => ['0 0 1 * 1', '2026-07-01 00:00', false];
+        yield 'pitfall-2 dom+dow OR, monday the 1st' => ['0 0 1 * 1', '2026-06-01 00:00', true];
+        yield 'pitfall-2 dom+dow OR, monday the 8th' => ['0 0 1 * 1', '2026-06-08 00:00', true];
+        yield 'pitfall-2 dom+dow OR, wednesday the 1st' => ['0 0 1 * 1', '2026-07-01 00:00', true];
+        yield 'pitfall-2 dom+dow OR, tuesday the 2nd matches neither' => ['0 0 1 * 1', '2026-06-02 00:00', false];
 
-        yield 'pitfall-3 day */2 matches even day' => ['0 0 */2 * *', '2026-06-02 00:00', true];
-        yield 'pitfall-3 day */2 matches day 30' => ['0 0 */2 * *', '2026-06-30 00:00', true];
-        yield 'pitfall-3 day */2 skips odd day 1' => ['0 0 */2 * *', '2026-06-01 00:00', false];
-        yield 'pitfall-3 day */2 skips odd day 3' => ['0 0 */2 * *', '2026-06-03 00:00', false];
-        yield 'pitfall-3 month */2 matches february' => ['0 0 1 */2 *', '2026-02-01 00:00', true];
-        yield 'pitfall-3 month */2 matches december' => ['0 0 1 */2 *', '2026-12-01 00:00', true];
-        yield 'pitfall-3 month */2 skips january' => ['0 0 1 */2 *', '2026-01-01 00:00', false];
-        yield 'pitfall-3 month */2 skips march' => ['0 0 1 */2 *', '2026-03-01 00:00', false];
+        yield 'pitfall-3 day */2 counts from 1, matches day 1' => ['0 0 */2 * *', '2026-06-01 00:00', true];
+        yield 'pitfall-3 day */2 counts from 1, matches day 3' => ['0 0 */2 * *', '2026-06-03 00:00', true];
+        yield 'pitfall-3 day */2 counts from 1, skips even day 2' => ['0 0 */2 * *', '2026-06-02 00:00', false];
+        yield 'pitfall-3 day */2 counts from 1, skips even day 30' => ['0 0 */2 * *', '2026-06-30 00:00', false];
+        yield 'pitfall-3 month */2 counts from 1, matches january' => ['0 0 1 */2 *', '2026-01-01 00:00', true];
+        yield 'pitfall-3 month */2 counts from 1, matches march' => ['0 0 1 */2 *', '2026-03-01 00:00', true];
+        yield 'pitfall-3 month */2 counts from 1, skips february' => ['0 0 1 */2 *', '2026-02-01 00:00', false];
+        yield 'pitfall-3 month */2 counts from 1, skips december' => ['0 0 1 */2 *', '2026-12-01 00:00', false];
 
         yield 'pitfall-4 dow 0 matches sunday' => ['0 0 * * 0', '2026-06-07 00:00', true];
-        yield 'pitfall-4 dow 7 never matches sunday' => ['0 0 * * 7', '2026-06-07 00:00', false];
-        yield 'pitfall-4 dow 7 never matches monday' => ['0 0 * * 7', '2026-06-08 00:00', false];
+        yield 'pitfall-4 dow 7 matches sunday' => ['0 0 * * 7', '2026-06-07 00:00', true];
+        yield 'pitfall-4 dow 7 misses monday' => ['0 0 * * 7', '2026-06-08 00:00', false];
         yield 'pitfall-4 dow 6-7 matches saturday' => ['0 0 * * 6-7', '2026-06-06 00:00', true];
-        yield 'pitfall-4 dow 6-7 misses sunday' => ['0 0 * * 6-7', '2026-06-07 00:00', false];
+        yield 'pitfall-4 dow 6-7 matches sunday' => ['0 0 * * 6-7', '2026-06-07 00:00', true];
+        yield 'pitfall-4 dow 6-7 misses monday' => ['0 0 * * 6-7', '2026-06-08 00:00', false];
 
-        yield 'pitfall-5 year field ignored, past year' => ['0 0 * * * 2020', '2026-06-03 00:00', true];
-        yield 'pitfall-5 year field ignored, future year' => ['0 0 * * * 2030', '2026-06-03 00:00', true];
-        yield 'pitfall-5 year field ignored, minute still checked' => ['0 0 * * * 2030', '2026-06-03 00:01', false];
+        yield 'pitfall-6 dow name matches monday' => ['0 0 * * MON', '2026-06-08 00:00', true];
+        yield 'pitfall-6 dow name misses tuesday' => ['0 0 * * MON', '2026-06-09 00:00', false];
+        yield 'pitfall-6 month name matches january' => ['0 0 1 JAN *', '2026-01-01 00:00', true];
+        yield 'pitfall-6 month name misses february' => ['0 0 1 JAN *', '2026-02-01 00:00', false];
+        yield 'pitfall-6 @midnight matches midnight' => ['@midnight', '2026-06-03 00:00', true];
+        yield 'pitfall-6 @midnight misses 00:01' => ['@midnight', '2026-06-03 00:01', false];
 
         yield '@daily, match' => ['@daily', '2026-06-03 00:00', true];
         yield '@daily, miss' => ['@daily', '2026-06-03 00:01', false];
@@ -100,10 +106,9 @@ final class ScheduleSemanticsTest extends TestCase
      */
     public static function rejectedScheduleProvider(): iterable
     {
-        yield 'pitfall-6 month name' => ['0 0 1 JAN *'];
-        yield 'pitfall-6 day of week name' => ['0 0 * * MON'];
+        yield 'pitfall-5 year field is rejected' => ['0 0 * * * 2030'];
+        yield 'pitfall-5 year field is rejected, past year' => ['0 0 * * * 2020'];
         yield 'unknown shorthand' => ['@reboot'];
-        yield 'unknown shorthand midnight' => ['@midnight'];
         yield 'minute out of range' => ['60 * * * *'];
         yield 'hour out of range' => ['0 24 * * *'];
         yield 'month 0' => ['0 0 1 0 *'];

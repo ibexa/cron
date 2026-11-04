@@ -100,15 +100,15 @@ final class CronRunCommandTest extends TestCase
     }
 
     /**
-     * Pitfall: the "!empty()" check treats a stderr chunk of exactly "0" as empty, so it is dropped.
+     * A stderr chunk of exactly "0" is still logged (the check is "!== ''", not "!empty()").
      */
-    public function testStderrConsistingOfZeroIsDropped(): void
+    public function testStderrConsistingOfZeroIsLogged(): void
     {
         $this->registry->addShellJob(self::EVERY_MINUTE, 'printf 0 >&2; exit 1');
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->never())->method('info');
-        $logger->expects($this->never())->method('error');
+        $logger->expects($this->once())->method('error')->with('0', ['command' => 'printf 0 >&2; exit 1', 'exitCode' => 1]);
 
         $this->runCron($logger);
     }
@@ -203,8 +203,8 @@ final class CronRunCommandTest extends TestCase
     }
 
     /**
-     * Pitfall: the 60s Process timeout is never checked, because the command only polls isRunning(),
-     * so a long job is neither killed nor reported as failed.
+     * Jobs run without a timeout, so a job running longer than 60s (cron/cron's old default)
+     * is neither killed nor reported as failed.
      */
     #[Group('slow')]
     public function testJobRunningLongerThanDefaultTimeoutIsNotKilled(): void

@@ -8,15 +8,12 @@ declare(strict_types=1);
 
 namespace Ibexa\Tests\Cron\Support;
 
-use Cron\Exception\InvalidPatternException;
-use DateTime;
 use DateTimeImmutable;
+use InvalidArgumentException;
 use Throwable;
 
 /**
- * SWAP POINT for IBX-13041 (1/2): the only place in the tests that reads cron/cron objects.
- * After cron/cron is replaced by dragonmantank/cron-expression + symfony/process, re-implement
- * these methods (and {@see ShellJobRegistry}); the tests themselves must stay untouched.
+ * Test helpers over the registry's CronExpression: due check and job command line.
  */
 final class CronLibraryAdapter
 {
@@ -27,7 +24,7 @@ final class CronLibraryAdapter
         object $job,
         DateTimeImmutable $now
     ): bool {
-        return $job->getSchedule()->valid(DateTime::createFromImmutable($now));
+        return $job->schedule->isDue($now);
     }
 
     /**
@@ -35,7 +32,7 @@ final class CronLibraryAdapter
      */
     public static function commandLine(object $job): string
     {
-        return $job->getProcess()->getCommandLine();
+        return $job->command;
     }
 
     /**
@@ -45,6 +42,6 @@ final class CronLibraryAdapter
      */
     public static function invalidScheduleException(): string
     {
-        return InvalidPatternException::class;
+        return InvalidArgumentException::class;
     }
 }
