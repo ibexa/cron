@@ -33,24 +33,7 @@ class CronJobCompilerPass implements CompilerPassInterface
                     throw new RuntimeException(sprintf('Invalid %s cron job configuration, schedule argument missing', $id));
                 }
 
-                // dragonmantank/cron-expression accepts descending ranges (e.g. "22-2") but never matches them
-                // and floods PHP warnings on every check, so reject them early.
-                preg_match_all('/(\d+)-(\d+)/', $cronJob['schedule'], $ranges, PREG_SET_ORDER);
-                foreach ($ranges as [$range, $start, $end]) {
-                    if ((int) $start > (int) $end) {
-                        throw new RuntimeException(sprintf(
-                            'Invalid %s cron job schedule "%s", descending range "%s" is not supported. Use an ascending range or a list instead.',
-                            $id,
-                            $cronJob['schedule'],
-                            $range
-                        ));
-                    }
-                }
-
-                // Registry is lazy - an invalid schedule would otherwise only fail on the first cron run, stopping all jobs.
-                if (!CronExpression::isValidExpression($cronJob['schedule'])) {
-                    throw new RuntimeException(sprintf('Invalid %s cron job schedule "%s"', $id, $cronJob['schedule']));
-                }
+                $this->validateSchedule($id, $cronJob['schedule']);
 
                 $cronJob['category'] = $cronJob['category'] ?? CronJobsRegistry::DEFAULT_CATEGORY;
 
@@ -61,6 +44,32 @@ class CronJobCompilerPass implements CompilerPassInterface
                     $cronJob['options'] ?? '',
                 ]);
             }
+        }
+    }
+
+    /**
+     * Registry is lazy - an invalid schedule would otherwise only fail on the first cron run, stopping all jobs.
+     */
+    private function validateSchedule(
+        string $id,
+        string $schedule
+    ): void {
+        // dragonmantank/cron-expression accepts descending ranges (e.g. "22-2") but never matches them
+        // and floods PHP warnings on every check, so reject them early.
+        preg_match_all('/(\d+)-(\d+)/', $schedule, $ranges, PREG_SET_ORDER);
+        foreach ($ranges as [$range, $start, $end]) {
+            if ((int) $start > (int) $end) {
+                throw new RuntimeException(sprintf(
+                    'Invalid %s cron job schedule "%s", descending range "%s" is not supported. Use an ascending range or a list instead.',
+                    $id,
+                    $schedule,
+                    $range
+                ));
+            }
+        }
+
+        if (!CronExpression::isValidExpression($schedule)) {
+            throw new RuntimeException(sprintf('Invalid %s cron job schedule "%s"', $id, $schedule));
         }
     }
 }
