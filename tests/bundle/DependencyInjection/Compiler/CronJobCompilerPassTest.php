@@ -11,6 +11,7 @@ namespace Ibexa\Tests\Bundle\Cron\DependencyInjection\Compiler;
 use Ibexa\Bundle\Cron\DependencyInjection\Compiler\CronJobCompilerPass;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -48,23 +49,48 @@ final class CronJobCompilerPassTest extends TestCase
         (new CronJobCompilerPass())->process($this->container);
     }
 
-    public function testDescendingRangeThrows(): void
-    {
-        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '0 22-2 * * *']));
+    #[DataProvider('provideDescendingRanges')]
+    public function testDescendingRangeThrows(
+        string $schedule,
+        string $range
+    ): void {
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => $schedule]));
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Invalid my.job cron job schedule "0 22-2 * * *", descending range "22-2" is not supported.');
+        $this->expectExceptionMessage(sprintf('Invalid my.job cron job schedule "%s", descending range "%s" is not supported.', $schedule, $range));
 
         (new CronJobCompilerPass())->process($this->container);
     }
 
-    public function testAscendingRangeIsRegistered(): void
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function provideDescendingRanges(): iterable
     {
-        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '0 2-22 * * 1-5']));
+        yield 'hours' => ['0 22-2 * * *', '22-2'];
+        yield 'day-of-week names' => ['0 0 * * FRI-MON', 'FRI-MON'];
+        yield 'lowercase names' => ['0 0 * * sun-sat', 'sun-sat'];
+        yield 'month names' => ['0 0 1 NOV-JAN *', 'NOV-JAN'];
+    }
+
+    #[DataProvider('provideAscendingRanges')]
+    public function testAscendingRangeIsRegistered(string $schedule): void
+    {
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => $schedule]));
 
         (new CronJobCompilerPass())->process($this->container);
 
         self::assertCount(1, $this->container->getDefinition(CronJobsRegistry::class)->getMethodCalls());
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function provideAscendingRanges(): iterable
+    {
+        yield 'numbers' => ['0 2-22 * * 1-5'];
+        yield 'day-of-week names' => ['0 0 * * MON-FRI'];
+        yield 'month names' => ['0 0 1 JAN-MAR *'];
     }
 
     public function testParameterInScheduleIsResolvedForValidation(): void
