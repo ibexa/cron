@@ -24,7 +24,7 @@
     "require": {
         "php": " >=8.3",
         "cron/cron": "^1.4",
-        "ibexa/core": "~5.0.x-dev",
+        "ibexa/core": "~5.0",
         "symfony/config": "^7.4",
         "symfony/console": "^7.4",
         "symfony/dependency-injection": "^7.4",
@@ -33,10 +33,10 @@
     },
     "require-dev": {
         "ibexa/code-style": "~2.3.1",
-        "ibexa/doctrine-migrations": "~5.0.x-dev",
-        "ibexa/doctrine-schema": "~5.0.x-dev",
-        "ibexa/rector": "~5.0.x-dev",
-        "ibexa/test-core": "~5.0.x-dev",
+        "ibexa/doctrine-migrations": "~5.0",
+        "ibexa/doctrine-schema": "~5.0",
+        "ibexa/rector": "~5.0",
+        "ibexa/test-core": "~5.0",
         "phpunit/phpunit": "^11.5"
     },
     "scripts": {
