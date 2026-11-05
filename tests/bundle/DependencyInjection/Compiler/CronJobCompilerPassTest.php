@@ -67,6 +67,38 @@ final class CronJobCompilerPassTest extends TestCase
         self::assertCount(1, $this->container->getDefinition(CronJobsRegistry::class)->getMethodCalls());
     }
 
+    public function testParameterInScheduleIsResolvedForValidation(): void
+    {
+        $this->container->setParameter('app.cron_schedule', '0 22-2 * * *');
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '%app.cron_schedule%']));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid my.job cron job schedule "0 22-2 * * *", descending range "22-2" is not supported.');
+
+        (new CronJobCompilerPass())->process($this->container);
+    }
+
+    public function testParameterInScheduleIsPassedUnresolved(): void
+    {
+        $this->container->setParameter('app.cron_schedule', '0 3 * * *');
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '%app.cron_schedule%']));
+
+        (new CronJobCompilerPass())->process($this->container);
+
+        $calls = $this->container->getDefinition(CronJobsRegistry::class)->getMethodCalls();
+        self::assertSame('%app.cron_schedule%', $calls[0][1][1]);
+    }
+
+    public function testEnvScheduleIsLeftForRuntime(): void
+    {
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '%env(APP_CRON_SCHEDULE)%']));
+
+        (new CronJobCompilerPass())->process($this->container);
+
+        $calls = $this->container->getDefinition(CronJobsRegistry::class)->getMethodCalls();
+        self::assertSame('%env(APP_CRON_SCHEDULE)%', $calls[0][1][1]);
+    }
+
     public function testDefaultCategoryAndEmptyOptionsAreApplied(): void
     {
         $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '* * * * *']));

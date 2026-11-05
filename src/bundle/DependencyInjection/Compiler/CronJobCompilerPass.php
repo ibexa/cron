@@ -33,7 +33,7 @@ class CronJobCompilerPass implements CompilerPassInterface
                     throw new RuntimeException(sprintf('Invalid %s cron job configuration, schedule argument missing', $id));
                 }
 
-                $this->validateSchedule($id, $cronJob['schedule']);
+                $this->validateSchedule($container, $id, $cronJob['schedule']);
 
                 $cronJob['category'] = $cronJob['category'] ?? CronJobsRegistry::DEFAULT_CATEGORY;
 
@@ -51,9 +51,16 @@ class CronJobCompilerPass implements CompilerPassInterface
      * Registry is lazy - an invalid schedule would otherwise only fail on the first cron run, stopping all jobs.
      */
     private function validateSchedule(
+        ContainerBuilder $container,
         string $id,
         string $schedule
     ): void {
+        $schedule = $container->getParameterBag()->resolveValue($schedule);
+        // %env()% values are known only at runtime, the registry rejects an invalid one on the first cron run.
+        if (!is_string($schedule) || $container->resolveEnvPlaceholders($schedule, '%%env(%s)%%') !== $schedule) {
+            return;
+        }
+
         // dragonmantank/cron-expression accepts descending ranges (e.g. "22-2") but never matches them
         // and floods PHP warnings on every check, so reject them early.
         preg_match_all('/(\d+)-(\d+)/', $schedule, $ranges, PREG_SET_ORDER);
