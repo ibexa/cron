@@ -11,7 +11,6 @@ namespace Ibexa\Tests\Bundle\Cron\Registry;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Ibexa\Core\MVC\Symfony\SiteAccess;
 use Ibexa\Core\MVC\Symfony\SiteAccess\SiteAccessServiceInterface;
-use Ibexa\Tests\Cron\Support\CronLibraryAdapter;
 use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -46,7 +45,7 @@ final class CronJobsRegistryTest extends TestCase
         $php = (new PhpExecutableFinder())->find();
         self::assertSame(
             $php . ' bin/console app:foo --bar=1 -v --siteaccess=site --env=prod',
-            CronLibraryAdapter::commandLine($registry->getCategoryCronJobs('default')[0])
+            $registry->getCategoryCronJobs('default')[0]->command
         );
     }
 
@@ -58,7 +57,7 @@ final class CronJobsRegistryTest extends TestCase
         $php = (new PhpExecutableFinder())->find();
         self::assertSame(
             $php . ' bin/console app:foo  --siteaccess=site --env=prod',
-            CronLibraryAdapter::commandLine($registry->getCategoryCronJobs(CronJobsRegistry::DEFAULT_CATEGORY)[0])
+            $registry->getCategoryCronJobs(CronJobsRegistry::DEFAULT_CATEGORY)[0]->command
         );
     }
 

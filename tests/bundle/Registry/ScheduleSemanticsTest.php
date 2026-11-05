@@ -13,7 +13,7 @@ use DateTimeZone;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Ibexa\Core\MVC\Symfony\SiteAccess;
 use Ibexa\Core\MVC\Symfony\SiteAccess\SiteAccessServiceInterface;
-use Ibexa\Tests\Cron\Support\CronLibraryAdapter;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -95,8 +95,7 @@ final class ScheduleSemanticsTest extends TestCase
         $registry = $this->createRegistry();
         $registry->addCronJob(new Command('app:x'), $pattern);
 
-        self::assertSame($expected, CronLibraryAdapter::isDue(
-            $registry->getCategoryCronJobs('default')[0],
+        self::assertSame($expected, $registry->getCategoryCronJobs('default')[0]->schedule->isDue(
             new DateTimeImmutable($now, new DateTimeZone('UTC'))
         ));
     }
@@ -122,7 +121,7 @@ final class ScheduleSemanticsTest extends TestCase
     {
         $registry = $this->createRegistry();
 
-        $this->expectException(CronLibraryAdapter::invalidScheduleException());
+        $this->expectException(InvalidArgumentException::class);
         $registry->addCronJob(new Command('app:foo'), $pattern);
     }
 
