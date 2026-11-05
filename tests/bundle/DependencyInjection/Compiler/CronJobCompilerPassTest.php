@@ -89,6 +89,7 @@ final class CronJobCompilerPassTest extends TestCase
     public static function provideAscendingRanges(): iterable
     {
         yield 'numbers' => ['0 2-22 * * 1-5'];
+        yield 'single-value range' => ['0 5-5 * * *'];
         yield 'day-of-week names' => ['0 0 * * MON-FRI'];
         yield 'month names' => ['0 0 1 JAN-MAR *'];
     }
