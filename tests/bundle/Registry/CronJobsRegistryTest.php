@@ -12,7 +12,6 @@ use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Ibexa\Core\MVC\Symfony\SiteAccess;
 use Ibexa\Core\MVC\Symfony\SiteAccess\SiteAccessServiceInterface;
 use Ibexa\Tests\Cron\Support\CronLibraryAdapter;
-use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -88,14 +87,6 @@ final class CronJobsRegistryTest extends TestCase
         $this->expectExceptionMessage('Unable to get a command name');
 
         $this->createRegistry()->addCronJob(new class() extends Command {}, '* * * * *');
-    }
-
-    public function testMissingScheduleThrows(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('schedule is required');
-
-        $this->createRegistry()->addCronJob(new Command('app:foo'), null);
     }
 
     private function createRegistry(): CronJobsRegistry

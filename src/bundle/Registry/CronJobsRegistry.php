@@ -10,7 +10,6 @@ namespace Ibexa\Bundle\Cron\Registry;
 
 use Cron\CronExpression;
 use Ibexa\Core\MVC\Symfony\SiteAccess\SiteAccessServiceInterface;
-use InvalidArgumentException;
 use LogicException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -50,14 +49,10 @@ class CronJobsRegistry
 
     public function addCronJob(
         Command $command,
-        ?string $schedule = null,
+        string $schedule,
         string $category = self::DEFAULT_CATEGORY,
         string $options = ''
     ): void {
-        if (null === $schedule) {
-            throw new InvalidArgumentException('CronJobsRegistry: Cron job schedule is required');
-        }
-
         $commandName = $command->getName();
         if (null === $commandName) {
             throw new LogicException('CronJobsRegistry: Unable to get a command name');
