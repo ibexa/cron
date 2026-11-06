@@ -9,9 +9,9 @@ namespace Ibexa\Bundle\Cron\DependencyInjection\Compiler;
 
 use Cron\CronExpression;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
-use RuntimeException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Reference;
 
 class CronJobCompilerPass implements CompilerPassInterface
