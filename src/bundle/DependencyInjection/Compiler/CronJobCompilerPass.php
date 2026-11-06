@@ -55,7 +55,8 @@ class CronJobCompilerPass implements CompilerPassInterface
     }
 
     /**
-     * Registry is lazy - an invalid schedule would otherwise only fail on the first cron run, stopping all jobs.
+     * Validated at compile time so an invalid schedule fails the container build instead of the first
+     * ibexa:cron:run, where it would stop all jobs.
      */
     private function validateSchedule(
         ContainerBuilder $container,
