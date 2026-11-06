@@ -8,10 +8,8 @@ declare(strict_types=1);
 
 namespace Ibexa\Bundle\Cron\Command;
 
-use Cron\Cron;
-use Cron\Executor\Executor;
-use Cron\Report\CronReport;
-use Cron\Resolver\ArrayResolver;
+use DateTimeImmutable;
+use DateTimeZone;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -19,6 +17,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 #[AsCommand(name: 'ibexa:cron:run', description: 'Perform one-time cron tasks run.')]
 final class CronRunCommand extends Command
@@ -60,41 +59,73 @@ EOT
         $category = $input->getOption('category');
         $cronJobs = $this->cronJobsRegistry->getCategoryCronJobs($category);
 
-        $resolver = new ArrayResolver($cronJobs);
+        $now = new DateTimeImmutable('now', new DateTimeZone(getenv('TZ') ?: date_default_timezone_get()));
 
-        $cron = new Cron();
-        $cron->setExecutor(new Executor());
-        $cron->setResolver($resolver);
+        /** @var list<Process> $processes */
+        $processes = [];
+        /** @var array<int, list<string>> $outputs */
+        $outputs = [];
+        /** @var array<int, list<string>> $errors */
+        $errors = [];
+        foreach ($cronJobs as $job) {
+            if (!$job->schedule->isDue($now)) {
+                continue;
+            }
 
-        /** @var CronReport $reports */
-        $reports = $cron->run();
+            $index = count($processes);
+            $outputs[$index] = [];
+            $errors[$index] = [];
 
-        while ($cron->isRunning()) {
+            // Jobs may legitimately run long, do not kill them (no timeout).
+            $process = Process::fromShellCommandline($job->command, timeout: null);
+            $process->start(static function (
+                string $type,
+                string $buffer
+            ) use ($index, &$outputs, &$errors): void {
+                if (Process::ERR === $type) {
+                    $errors[$index][] = $buffer;
+                } else {
+                    $outputs[$index][] = $buffer;
+                }
+            });
+            $processes[] = $process;
+        }
+
+        // Poll instead of wait(): wait() throws ProcessSignaledException for a job killed by a signal (aborting the
+        // run and killing the other jobs) and, by reading one process at a time, lets the others block on full pipes.
+        // isRunning() never throws and drains every process's pipes.
+        while (array_filter($processes, static fn (Process $p): bool => $p->isRunning()) !== []) {
             usleep(10000);
         }
 
-        $this->logReportsOutput($reports);
+        foreach ($processes as $index => $process) {
+            $this->logRun($process, $outputs[$index], $errors[$index]);
+        }
 
         return Command::SUCCESS;
     }
 
-    private function logReportsOutput(CronReport $reports): void
-    {
-        foreach ($reports->getReports() as $report) {
-            $process = $report->getJob()->getProcess();
-            $extraInfo = [
-                'command' => $process->getCommandLine(),
-                'exitCode' => $process->getExitCode(),
-            ];
-            foreach ($report->getOutput() as $reportOutput) {
-                $this->logger->info($reportOutput, $extraInfo);
-            }
-            if (!$report->isSuccessful()) {
-                foreach ($report->getError() as $reportError) {
-                    $reportError = trim($reportError);
-                    if (!empty($reportError)) {
-                        $this->logger->error($reportError, $extraInfo);
-                    }
+    /**
+     * @param list<string> $output
+     * @param list<string> $errors
+     */
+    private function logRun(
+        Process $process,
+        array $output,
+        array $errors
+    ): void {
+        $extraInfo = [
+            'command' => $process->getCommandLine(),
+            'exitCode' => $process->getExitCode(),
+        ];
+        foreach ($output as $chunk) {
+            $this->logger->info($chunk, $extraInfo);
+        }
+        if (!$process->isSuccessful()) {
+            foreach ($errors as $chunk) {
+                $chunk = trim($chunk);
+                if ($chunk !== '') {
+                    $this->logger->error($chunk, $extraInfo);
                 }
             }
         }

@@ -4,12 +4,13 @@
  * @copyright Copyright (C) Ibexa AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Ibexa\Bundle\Cron\Registry;
 
-use Cron\Job\ShellJob;
-use Cron\Schedule\CrontabSchedule;
+use Cron\CronExpression;
 use Ibexa\Core\MVC\Symfony\SiteAccess\SiteAccessServiceInterface;
+use LogicException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -18,7 +19,7 @@ class CronJobsRegistry
     public const string DEFAULT_CATEGORY = 'default';
 
     /**
-     * @var array<string, ShellJob[]>
+     * @var array<string, list<CronJob>>
      */
     protected array $cronJobs = [];
 
@@ -38,7 +39,7 @@ class CronJobsRegistry
 
         $phpBinary = $finder->find();
         if (false === $phpBinary) {
-            throw new \LogicException('CronJobsRegistry: Unable to find PHP binary');
+            throw new LogicException('CronJobsRegistry: Unable to find PHP binary');
         }
 
         $this->executable = $phpBinary;
@@ -48,13 +49,13 @@ class CronJobsRegistry
 
     public function addCronJob(
         Command $command,
-        ?string $schedule = null,
+        string $schedule,
         string $category = self::DEFAULT_CATEGORY,
         string $options = ''
     ): void {
         $commandName = $command->getName();
         if (null === $commandName) {
-            throw new \LogicException('CronJobsRegistry: Unable to get a command name');
+            throw new LogicException('CronJobsRegistry: Unable to get a command name');
         }
 
         $command = sprintf(
@@ -67,15 +68,11 @@ class CronJobsRegistry
             $this->environment
         );
 
-        $job = new ShellJob();
-        $job->setSchedule(new CrontabSchedule($schedule));
-        $job->setCommand($command);
-
-        $this->cronJobs[$category][] = $job;
+        $this->cronJobs[$category][] = new CronJob(new CronExpression($schedule), $command);
     }
 
     /**
-     * @return ShellJob[]
+     * @return list<CronJob>
      */
     public function getCategoryCronJobs(string $category): array
     {
