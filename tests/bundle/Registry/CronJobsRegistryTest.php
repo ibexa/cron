@@ -108,7 +108,9 @@ final class CronJobsRegistryTest extends TestCase
     {
         yield 'descending hours' => ['0 22-2 * * *', 'descending range "22-2" is not supported.'];
         yield 'descending day-of-week names' => ['*/15 * * * FRI-MON', 'descending range "FRI-MON" is not supported.'];
-        yield 'not an expression' => ['bzdura', 'not a valid cron expression'];
+        yield 'not an expression' => ['bzdura', 'expected 5 fields (minute, hour, day of month, month, day of week), got 1'];
+        yield 'year field' => ['*/15 * * * * 2026', 'expected 5 fields (minute, hour, day of month, month, day of week), got 6'];
+        yield 'invalid minute' => ['61 * * * *', 'invalid minute field "61"'];
     }
 
     private function createRegistry(): CronJobsRegistry

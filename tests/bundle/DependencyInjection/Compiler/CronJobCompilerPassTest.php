@@ -39,14 +39,29 @@ final class CronJobCompilerPassTest extends TestCase
         (new CronJobCompilerPass())->process($this->container);
     }
 
-    public function testInvalidScheduleThrows(): void
-    {
-        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => '0 0 * * * 2030']));
+    #[DataProvider('provideInvalidSchedules')]
+    public function testInvalidScheduleThrows(
+        string $schedule,
+        string $reason
+    ): void {
+        $this->container->setDefinition('my.job', (new Definition())->addTag('ibexa.cron.job', ['schedule' => $schedule]));
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Invalid my.job cron job schedule "0 0 * * * 2030"');
+        $this->expectExceptionMessage(sprintf('Invalid my.job cron job schedule "%s", %s', $schedule, $reason));
 
         (new CronJobCompilerPass())->process($this->container);
+    }
+
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function provideInvalidSchedules(): iterable
+    {
+        yield 'year field' => ['0 0 * * * 2030', 'expected 5 fields (minute, hour, day of month, month, day of week), got 6'];
+        yield 'too few fields' => ['0 0 * *', 'expected 5 fields (minute, hour, day of month, month, day of week), got 4'];
+        yield 'invalid hour' => ['0 25 * * *', 'invalid hour field "25"'];
+        yield 'invalid day of week' => ['0 0 * * FOO', 'invalid day of week field "FOO"'];
+        yield 'unknown shortcut' => ['@sometimes', 'not a valid cron expression'];
     }
 
     #[DataProvider('provideDescendingRanges')]
