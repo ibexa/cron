@@ -62,6 +62,19 @@ class CronJobCompilerPass implements CompilerPassInterface
         if (str_contains($fields[2], '*/') || str_contains($fields[3], '*/')) {
             $messages[] = 'uses a step (*/n) in day-of-month or month. Since 6.0 steps count from the first value of the field (day 1, month 1), currently from 0.';
         }
+        foreach ([0 => ['minute', 60], 1 => ['hour', 24]] as $position => [$name, $size]) {
+            // A step beyond the field range matches only 0 now, 6.0 wraps it around (*/90 minutes -> minute 30)
+            if (preg_match('#\*/(\d+)#', $fields[$position], $step) === 1 && (int) $step[1] >= $size && (int) $step[1] % $size !== 0) {
+                $messages[] = sprintf(
+                    'uses a step "*/%d" larger than the %s range. It currently matches only %s 0; since 6.0 it matches %s %d. Use 0 to keep the current behaviour.',
+                    $step[1],
+                    $name,
+                    $name,
+                    $name,
+                    (int) $step[1] % $size
+                );
+            }
+        }
         if (preg_match('/(^|[,-])7(,|$)/', $fields[4]) === 1) {
             $messages[] = 'uses 7 in day-of-week. Since 6.0 it means Sunday, currently it never matches.';
         }

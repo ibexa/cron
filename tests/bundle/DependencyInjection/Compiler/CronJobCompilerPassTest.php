@@ -125,6 +125,14 @@ final class CronJobCompilerPassTest extends TestCase
             '0 0 1 */3 *',
             'uses a step (*/n) in day-of-month or month. Since 6.0 steps count from the first value of the field (day 1, month 1), currently from 0.',
         ];
+        yield 'minute step beyond the range' => [
+            '*/90 * * * *',
+            'uses a step "*/90" larger than the minute range. It currently matches only minute 0; since 6.0 it matches minute 30. Use 0 to keep the current behaviour.',
+        ];
+        yield 'hour step beyond the range' => [
+            '0 */25 * * *',
+            'uses a step "*/25" larger than the hour range. It currently matches only hour 0; since 6.0 it matches hour 1. Use 0 to keep the current behaviour.',
+        ];
         yield 'day-of-week 7' => [
             '0 0 * * 7',
             'uses 7 in day-of-week. Since 6.0 it means Sunday, currently it never matches.',
@@ -172,6 +180,8 @@ final class CronJobCompilerPassTest extends TestCase
         yield 'first of month' => ['0 0 1 * *'];
         yield 'mondays' => ['0 0 * * 1'];
         yield 'step in day-of-week' => ['* * * * */7'];
+        yield 'minute step equal to the range' => ['*/60 * * * *'];
+        yield 'hour step equal to the range' => ['0 */24 * * *'];
         yield 'ascending hour range' => ['0 2-22 * * *'];
         yield 'too few fields' => ['* * * *'];
         yield 'macro' => ['@daily'];
