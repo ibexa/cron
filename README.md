@@ -1,6 +1,6 @@
 # Ibexa Cron
 
-This package exposes [cron/cron](https://github.com/Cron/Cron) package for use in Ibexa (or just plain Symfony) via a simle command
+This package exposes [dragonmantank/cron-expression](https://github.com/dragonmantank/cron-expression) package for use in Ibexa (or just plain Symfony) via a simle command
 `ibexa:cron:run`.
 
 This is *not* a replacement for [cron/cron-bundle](https://github.com/Cron/Symfony-Bundle) but rather a simpler alternative to it which can more easily grow into focusing more on Ibexa Platform needs in the future including e.g. support for handling cron jobs across a cluster install _(separating jobs that should run on all nodes vs jobs that should only be run on one at a time and a lock system to go with it for instance)_.
@@ -25,10 +25,23 @@ Setting up own cron jobs is as simple as tagging services for your existing Symf
 
 The tag takes the following arguments:
 - `name`: `ibexa.cron.job`
-- `schedule`: _Takes any kind of [format supported by cron/cron](https://github.com/Cron/Cron#crontab-syntax), which mimics linux crontab format. E.g. `* * * * *`_
+- `schedule`: _Takes any kind of [format supported by dragonmantank/cron-expression](https://github.com/dragonmantank/cron-expression#cron-expressions), which mimics linux crontab format. E.g. `* * * * *`_
 - `category`: _(Optional, by default: `default`) Lets you separate cronjobs that should be run under different logic then default, e.g. infrequent jobs (NOTE: Means end user will need to setup several entries in his crontab to run all categories!)_
 - `options`: _(Optional, by default: `''`) Takes custom option/s in string format which are added to the command. (E.g. '--keep=0 --status=draft' for running the cleanup versions command)_
 
+
+Invalid schedules fail the container build (e.g. on `cache:clear`) with the cron job's service id in the message.
+
+### Schedule semantics since 6.0
+
+Up to 5.0 schedules were evaluated by `cron/cron`. Since 6.0 they follow standard cron semantics, which differ for:
+- day-of-month and day-of-week both restricted (e.g. `0 0 1 * 1`) - now matched with OR (the 1st of the month or any Monday), before with AND
+- steps in day-of-month or month (e.g. `*/2`) - now counted from 1 (1, 3, 5, ...), before from 0 (2, 4, 6, ...)
+- `7` in day-of-week - now Sunday, before it never matched
+- descending ranges (e.g. `22-2`) and a 6th (year) field - now rejected, before matched every value between the bounds / ignored
+- names (`MON`, `JAN`) and `@midnight` - now supported
+
+5.0 triggers a deprecation for tagged schedules affected by any of the first four.
 
 ### Example
 

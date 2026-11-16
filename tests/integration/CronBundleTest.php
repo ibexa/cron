@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace Ibexa\Tests\Integration\Cron;
 
+use Ibexa\Bundle\Cron\Registry\CronJob;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Ibexa\Contracts\Test\Core\IbexaKernelTestCase;
-use Ibexa\Tests\Cron\Support\CronLibraryAdapter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
@@ -62,7 +62,7 @@ final class CronBundleTest extends IbexaKernelTestCase
     private function commandLines(string $category): array
     {
         return array_map(
-            CronLibraryAdapter::commandLine(...),
+            static fn (CronJob $job): string => $job->command,
             $this->registry->getCategoryCronJobs($category),
         );
     }
