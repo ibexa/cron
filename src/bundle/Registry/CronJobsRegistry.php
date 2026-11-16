@@ -57,7 +57,7 @@ class CronJobsRegistry
             trigger_deprecation(
                 'ibexa/cron',
                 '5.0.11',
-                'Passing null as $schedule to %s() is deprecated. Since 6.0 an \InvalidArgumentException is thrown.',
+                'Passing null as $schedule to %s() is deprecated. Since 6.0 $schedule is a required string.',
                 __METHOD__
             );
         }
