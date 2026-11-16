@@ -7,8 +7,9 @@
 
 namespace Ibexa\Bundle\Cron\DependencyInjection\Compiler;
 
-use Cron\CronExpression;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
+use Ibexa\Bundle\Cron\Registry\ScheduleValidator;
+use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
@@ -16,13 +17,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CronJobCompilerPass implements CompilerPassInterface
 {
-    /** Month and day-of-week names as dragonmantank/cron-expression numbers them (SUN is 7). */
-    private const array RANGE_NAMES = [
-        'JAN' => 1, 'FEB' => 2, 'MAR' => 3, 'APR' => 4, 'MAY' => 5, 'JUN' => 6,
-        'JUL' => 7, 'AUG' => 8, 'SEP' => 9, 'OCT' => 10, 'NOV' => 11, 'DEC' => 12,
-        'MON' => 1, 'TUE' => 2, 'WED' => 3, 'THU' => 4, 'FRI' => 5, 'SAT' => 6, 'SUN' => 7,
-    ];
-
     public function process(ContainerBuilder $container): void
     {
         if (!$container->has(CronJobsRegistry::class)) {
@@ -69,30 +63,10 @@ class CronJobCompilerPass implements CompilerPassInterface
             return;
         }
 
-        // dragonmantank/cron-expression accepts descending ranges (e.g. "22-2", "FRI-MON") but never matches them
-        // (hour/minute ones also flood PHP warnings on every check), so reject them early.
-        preg_match_all('/([a-z\d]+)-([a-z\d]+)/i', $schedule, $ranges, PREG_SET_ORDER);
-        foreach ($ranges as [$range, $start, $end]) {
-            if ($this->rangeBound($start) > $this->rangeBound($end)) {
-                throw new RuntimeException(sprintf(
-                    'Invalid %s cron job schedule "%s", descending range "%s" is not supported. Use an ascending range or a list instead.',
-                    $id,
-                    $schedule,
-                    $range
-                ));
-            }
+        try {
+            (new ScheduleValidator())->validate($schedule);
+        } catch (InvalidArgumentException $e) {
+            throw new RuntimeException(sprintf('Invalid %s cron job schedule "%s", %s', $id, $schedule, $e->getMessage()), 0, $e);
         }
-
-        if (!CronExpression::isValidExpression($schedule)) {
-            throw new RuntimeException(sprintf('Invalid %s cron job schedule "%s"', $id, $schedule));
-        }
-    }
-
-    /**
-     * Unknown names map to 0, isValidExpression() rejects them.
-     */
-    private function rangeBound(string $bound): int
-    {
-        return ctype_digit($bound) ? (int) $bound : self::RANGE_NAMES[strtoupper($bound)] ?? 0;
     }
 }

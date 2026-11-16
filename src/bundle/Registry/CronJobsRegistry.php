@@ -10,6 +10,7 @@ namespace Ibexa\Bundle\Cron\Registry;
 
 use Cron\CronExpression;
 use Ibexa\Core\MVC\Symfony\SiteAccess\SiteAccessServiceInterface;
+use InvalidArgumentException;
 use LogicException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -56,6 +57,12 @@ class CronJobsRegistry
         $commandName = $command->getName();
         if (null === $commandName) {
             throw new LogicException('CronJobsRegistry: Unable to get a command name');
+        }
+
+        try {
+            (new ScheduleValidator())->validate($schedule);
+        } catch (InvalidArgumentException $e) {
+            throw new InvalidArgumentException(sprintf('Invalid %s cron job schedule "%s", %s', $commandName, $schedule, $e->getMessage()), 0, $e);
         }
 
         $command = sprintf(
