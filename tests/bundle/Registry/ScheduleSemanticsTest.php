@@ -8,11 +8,11 @@ declare(strict_types=1);
 
 namespace Ibexa\Tests\Bundle\Cron\Registry;
 
-use DateTimeImmutable;
+use Cron\Exception\InvalidPatternException;
+use DateTime;
 use DateTimeZone;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 use Ibexa\Core\MVC\Symfony\SiteAccess;
-use Ibexa\Tests\Cron\Support\CronLibraryAdapter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 
@@ -90,9 +90,8 @@ final class ScheduleSemanticsTest extends TestCase
         $registry = $this->createRegistry();
         $registry->addCronJob(new Command('app:x'), $pattern);
 
-        self::assertSame($expected, CronLibraryAdapter::isDue(
-            $registry->getCategoryCronJobs('default')[0],
-            new DateTimeImmutable($now, new DateTimeZone('UTC'))
+        self::assertSame($expected, $registry->getCategoryCronJobs('default')[0]->getSchedule()->valid(
+            new DateTime($now, new DateTimeZone('UTC'))
         ));
     }
 
@@ -120,7 +119,7 @@ final class ScheduleSemanticsTest extends TestCase
     {
         $registry = $this->createRegistry();
 
-        $this->expectException(CronLibraryAdapter::invalidScheduleException());
+        $this->expectException(InvalidPatternException::class);
         $registry->addCronJob(new Command('app:foo'), $pattern);
     }
 

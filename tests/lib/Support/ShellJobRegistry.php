@@ -13,8 +13,7 @@ use Cron\Schedule\CrontabSchedule;
 use Ibexa\Bundle\Cron\Registry\CronJobsRegistry;
 
 /**
- * SWAP POINT for IBX-13041 (2/2): lets tests register arbitrary shell commands, because the real
- * registry can only build "<php> <script> <command-name> ..." lines. Adjust to the new job type.
+ * Lets tests register arbitrary shell commands as jobs.
  */
 final class ShellJobRegistry extends CronJobsRegistry
 {
