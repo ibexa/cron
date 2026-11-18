@@ -37,11 +37,12 @@ Invalid schedules fail the container build (e.g. on `cache:clear`) with the cron
 Up to 5.0 schedules were evaluated by `cron/cron`. Since 6.0 they follow standard cron semantics, which differ for:
 - day-of-month and day-of-week both restricted (e.g. `0 0 1 * 1`) - now matched with OR (the 1st of the month or any Monday), before with AND
 - steps in day-of-month or month (e.g. `*/2`) - now counted from 1 (1, 3, 5, ...), before from 0 (2, 4, 6, ...)
+- minute or hour steps beyond the field range (e.g. `*/90`) - now wrapped around (`*/90` matches minute 30), before matched only 0
 - `7` in day-of-week - now Sunday, before it never matched
 - descending ranges (e.g. `22-2`) and a 6th (year) field - now rejected, before matched every value between the bounds / ignored
 - names (`MON`, `JAN`) and `@midnight` - now supported
 
-5.0 triggers a deprecation for tagged schedules affected by any of the first four.
+5.0 triggers a deprecation for tagged schedules affected by any of the first five.
 
 ### Example
 
